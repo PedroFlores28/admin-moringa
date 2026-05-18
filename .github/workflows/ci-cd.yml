@@ -1,0 +1,44 @@
+# Pipeline mínimo: este proyecto no define npm test ni npm run lint en package.json.
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+
+  deploy-staging:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Añade aquí tus comandos de deploy a staging
+
+  deploy-production:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Añade aquí tus comandos de deploy a producción
