@@ -1,14 +1,25 @@
 import axios from "axios";
 
 // Configuración para diferentes entornos (igual que la app)
+const PROD_API = "https://sifrah-server-0920254d8662.herokuapp.com";
+
+function isLoopbackServer(url) {
+    if (!url) return true;
+    return /localhost|127\.0\.0\.1/i.test(url);
+}
+
 const getBaseURL = () => {
-    if (process.env.VUE_APP_SERVER) {
-        return process.env.VUE_APP_SERVER + "/api";
+    const server = (process.env.VUE_APP_SERVER || "").trim();
+    const isDev = process.env.NODE_ENV === "development";
+
+    // En producción nunca usar localhost (Vercel no puede llamar a tu PC)
+    if (server && !isLoopbackServer(server)) {
+        return server.replace(/\/$/, "") + "/api";
     }
-    const isDevelopment = process.env.NODE_ENV === "development";
-    return isDevelopment
-        ? "/api"
-        : "https://sifrah-server-0920254d8662.herokuapp.com/api";
+    if (isDev) {
+        return server ? server.replace(/\/$/, "") + "/api" : "/api";
+    }
+    return PROD_API + "/api";
 };
 
 axios.defaults.baseURL = getBaseURL();
