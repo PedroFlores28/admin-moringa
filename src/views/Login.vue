@@ -47,8 +47,8 @@ export default {
   components: { Layout },
   data() {
     return{
-      email:    null,
-      password: null,
+      email:    'ADMIN',
+      password: 'MoringaAdmin2025!',
       error: {
         email:    false,
         password: false,
