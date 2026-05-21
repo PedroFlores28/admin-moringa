@@ -643,7 +643,7 @@ export default {
     this.loading = false;
 
     // error
-    // if(data.error && data.msg == 'invalid filter') this.$router.push('collects/all')
+    // if(data.error && data.msg == 'invalid filter') this.$router.push('collectBsall')
 
     data.offices = data.offices.map((office) => {
       office.new_products = [];

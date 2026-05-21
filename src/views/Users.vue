@@ -394,14 +394,14 @@
                   <b>Estado:</b> {{ getUserStatus(viewingUser) }}
                 </div>
                 <div class="field">
-                  <b>Saldo Disponible:</b> S/.
+                  <b>Saldo Disponible:</b> Bs.
                   {{ Number(viewingUser.balance).toFixed(2) }}
                 </div>
                 <div class="field">
-                  <b>Saldo No Disponible:</b> S/.
+                  <b>Saldo No Disponible:</b> Bs.
                   {{ Number(viewingUser.virtualbalance).toFixed(2) }}
                   <div class="user-cell__balance-row">
-                  <b>Saldo Sifrah:</b> S/.
+                  <b>Saldo Sifrah:</b> Bs.
                   {{ Number(viewingUser.sifrahbalance).toFixed(2) }}
                 </div>
               </div>
@@ -827,18 +827,18 @@ export default {
           this.totalItems - (this.currentPage - 1) * this.itemsPerPage - index,
         balance:
           user.balance != null
-            ? `S/. ${Number(user.balance).toFixed(2)}`
-            : "S/. 0.00",
+            ? `Bs. ${Number(user.balance).toFixed(2)}`
+            : "Bs. 0.00",
         virtualbalance:
           user.virtualbalance != null
-            ? `S/. ${Number(user.virtualbalance).toFixed(2)}`
-            : "S/. 0.00",
+            ? `Bs. ${Number(user.virtualbalance).toFixed(2)}`
+            : "Bs. 0.00",
         virtualbalanceRaw:
           user.virtualbalance != null ? Number(user.virtualbalance) : 0,
         sifrahbalance:
           user.sifrahbalance != null
-            ? `S/. ${Number(user.sifrahbalance).toFixed(2)}`
-            : "S/. 0.00",
+            ? `Bs. ${Number(user.sifrahbalance).toFixed(2)}`
+            : "Bs. 0.00",
         sifrahbalanceRaw:
           user.sifrahbalance != null ? Number(user.sifrahbalance) : 0,
         rankLabel: this.getEffectiveRankLabel(user),
@@ -861,7 +861,7 @@ export default {
     },
     money(val) {
       if (val == null || isNaN(val)) return "0.00";
-      return `S/. ${Number(val).toFixed(2)}`;
+      return `Bs. ${Number(val).toFixed(2)}`;
     },
   },
   beforeRouteUpdate(to, from, next) {
@@ -1156,7 +1156,7 @@ export default {
       if (!value) return "-";
       const d = new Date(value);
       if (isNaN(d.getTime())) return "-";
-      return d.toLocaleString("es-PE");
+      return d.toLocaleString("es-BO");
     },
 
     onPeriodSelect() {

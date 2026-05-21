@@ -30,7 +30,7 @@
           <!-- Tabs: Afiliaciones / Activaciones / Vouchers -->
           <div class="section-tabs" role="tablist" aria-label="Navegación Afiliaciones">
             <router-link
-              to="/affiliations/all"
+              to="/affiliationBsall"
               class="section-tab"
               :class="{ 'is-active': $route.path.startsWith('/affiliations') }"
               role="tab"
@@ -39,7 +39,7 @@
               Afiliaciones
             </router-link>
             <router-link
-              to="/activations/all"
+              to="/activationBsall"
               class="section-tab"
               :class="{ 'is-active': $route.path.startsWith('/activations') }"
               role="tab"
@@ -151,7 +151,7 @@
           <template #cell-plan="{ value }">
             <span v-if="value && value.name">
               {{ value.name
-              }}<span v-if="value.amount"> (S/ {{ value.amount }})</span>
+              }}<span v-if="value.amount"> (Bs {{ value.amount }})</span>
             </span>
             <span v-else>N/A</span>
           </template>
@@ -178,7 +178,7 @@
               >{{ paymentSplitDisplay(row.raw).modeLabel }}</span>
               <template v-if="paymentSplitDisplay(row.raw).aggregateBalanceDisplay">
                 <small style="color:#374151; font-weight:700;">
-                  Saldo disp.: S/
+                  Saldo disp.: Bs
                   {{ paymentSplitDisplay(row.raw).totalInternalPaid.toFixed(2) }}
                 </small>
               </template>
@@ -186,13 +186,13 @@
                 <small
                   v-if="paymentSplitDisplay(row.raw).paid_virtual > 0"
                   style="color:#6b7280;"
-                >No disp.: S/ {{ paymentSplitDisplay(row.raw).paid_virtual.toFixed(2) }}</small>
+                >No disp.: Bs {{ paymentSplitDisplay(row.raw).paid_virtual.toFixed(2) }}</small>
                 <small style="color:#374151; font-weight:700;">
-                  Saldo disp.: S/ {{ paymentSplitDisplay(row.raw).paid_balance.toFixed(2) }}
+                  Saldo disp.: Bs {{ paymentSplitDisplay(row.raw).paid_balance.toFixed(2) }}
                 </small>
               </template>
               <small style="color:#6b7280;">
-                Faltante: S/ {{ paymentSplitDisplay(row.raw).due.toFixed(2) }}
+                Faltante: Bs {{ paymentSplitDisplay(row.raw).due.toFixed(2) }}
               </small>
             </div>
           </template>
@@ -428,7 +428,7 @@
                       ><i class="fas fa-wallet"></i> Saldo disp. (total abonado):</span
                     >
                     <span class="detail-value" style="font-weight: 800;">
-                      S/
+                      Bs
                       {{
                         paymentSplitDisplay(
                           selectedAffiliation
@@ -443,7 +443,7 @@
                       ><i class="fas fa-wallet"></i> Abono con saldo disponible:</span
                     >
                     <span class="detail-value">
-                      S/ {{ paymentSplitDisplay(selectedAffiliation).paid_balance.toFixed(2) }}
+                      Bs {{ paymentSplitDisplay(selectedAffiliation).paid_balance.toFixed(2) }}
                     </span>
                   </div>
                   <div class="detail-item" v-if="paymentSplitDisplay(selectedAffiliation).paid_virtual > 0">
@@ -451,7 +451,7 @@
                       ><i class="fas fa-coins"></i> Abono saldo no disponible:</span
                     >
                     <span class="detail-value">
-                      S/ {{ paymentSplitDisplay(selectedAffiliation).paid_virtual.toFixed(2) }}
+                      Bs {{ paymentSplitDisplay(selectedAffiliation).paid_virtual.toFixed(2) }}
                     </span>
                   </div>
                 </template>
@@ -460,7 +460,7 @@
                     ><i class="fas fa-file-invoice-dollar"></i> Faltante (voucher/efectivo):</span
                   >
                   <span class="detail-value" style="font-weight: 800;">
-                    S/ {{ paymentSplitDisplay(selectedAffiliation).due.toFixed(2) }}
+                    Bs {{ paymentSplitDisplay(selectedAffiliation).due.toFixed(2) }}
                   </span>
                 </div>
               </template>
@@ -551,7 +551,7 @@
                     ><i class="fas fa-donate"></i> Diferencia pagada:</span
                   >
                   <span class="detail-value"
-                    >S/
+                    >Bs
                     {{
                       selectedAffiliation.difference &&
                       selectedAffiliation.difference.amount
@@ -931,7 +931,7 @@ export default {
           if (periodByDate && periodByDate.label) {
             periodLabel = periodByDate.label;
           } else {
-            // Fallback: derivar del mes/año si no se encuentra período
+            // Fallback: derivar del meBsaño si no se encuentra período
             const derivedPeriod = this.derivePeriodFromDate(affiliation.date);
             periodLabel = derivedPeriod.label;
           }
@@ -985,13 +985,13 @@ export default {
                 affiliationDateType: typeof affiliation.date,
                 affiliationDateIsDate: affiliation.date instanceof Date,
                 affiliationDateParsed: affiliationDate ? affiliationDate.toISOString() : 'null',
-                affiliationDateFormatted: affiliationDate ? affiliationDate.toLocaleDateString("es-PE") : 'null',
+                affiliationDateFormatted: affiliationDate ? affiliationDate.toLocaleDateString("es-BO") : 'null',
                 affiliationDateDDMM: affiliationDate ? `${affiliationDate.getDate()}/${affiliationDate.getMonth() + 1}/${affiliationDate.getFullYear()}` : 'null',
                 closedAtRaw: closedPeriod.closedAt,
                 closedAtType: typeof closedPeriod.closedAt,
                 closedAtIsDate: closedPeriod.closedAt instanceof Date,
                 closedAtParsed: closedAt ? closedAt.toISOString() : 'null',
-                closedAtFormatted: closedAt ? closedAt.toLocaleDateString("es-PE") : 'null',
+                closedAtFormatted: closedAt ? closedAt.toLocaleDateString("es-BO") : 'null',
                 closedAtDDMM: closedAt ? `${closedAt.getDate()}/${closedAt.getMonth() + 1}/${closedAt.getFullYear()}` : 'null',
                 isAfterClose: isAfterClose,
                 periodLabel: closedPeriod.label
@@ -1050,12 +1050,12 @@ export default {
             
             // Solo mostrar si no se mostró ya por la lógica anterior
             if (affiliationDate && closedAt && affiliationDate >= closedAt && !shownSeparators.has(separatorKey)) {
-              const closedDate = closedAt.toLocaleDateString("es-PE", {
+              const closedDate = closedAt.toLocaleDateString("es-BO", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
               });
-              const closedTime = closedAt.toLocaleTimeString("es-PE", {
+              const closedTime = closedAt.toLocaleTimeString("es-BO", {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: true,
@@ -1094,12 +1094,12 @@ export default {
         // Si esta afiliación tiene marcado que debe mostrar un separador antes, insertarlo primero
         if (affiliation._showSeparatorBefore) {
           const { period: closedPeriod, closedAt } = affiliation._showSeparatorBefore;
-          const closedDate = closedAt.toLocaleDateString("es-PE", {
+          const closedDate = closedAt.toLocaleDateString("es-BO", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
           });
-          const closedTime = closedAt.toLocaleTimeString("es-PE", {
+          const closedTime = closedAt.toLocaleTimeString("es-BO", {
             hour: "2-digit",
             minute: "2-digit",
             hour12: true,
@@ -1461,7 +1461,7 @@ export default {
       this.loading = true;
 
       try {
-        // Cargar TODO para que filtros/search funcionen al 100% en frontend
+        // Cargar TODO para que filtroBssearch funcionen al 100% en frontend
         const { data: allData } = await api.Affiliations.GET({
           filter: filter || "all",
           account: "admin",
@@ -1641,11 +1641,11 @@ export default {
 
     formatBalanceObj(balance) {
       if (!balance) return "-";
-      return `Disponible: S/. ${Number(balance.available).toFixed(
+      return `Disponible: Bs. ${Number(balance.available).toFixed(
         2
-      )}, No disponible: S/. ${Number(balance.notAvailable).toFixed(
+      )}, No disponible: Bs. ${Number(balance.notAvailable).toFixed(
         2
-      )}, Por cobrar: S/. ${Number(balance.toCollect).toFixed(2)}`;
+      )}, Por cobrar: Bs. ${Number(balance.toCollect).toFixed(2)}`;
     },
 
     async handleTableAction(action) {
@@ -1903,7 +1903,7 @@ export default {
           if (affiliation.date) {
             const d = parseDateDDMMYYYY(affiliation.date);
             if (!isNaN(d)) {
-              fecha = d.toLocaleDateString("es-PE", {
+              fecha = d.toLocaleDateString("es-BO", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
@@ -1926,12 +1926,12 @@ export default {
           if (affiliation.type === "upgrade") {
             total =
               affiliation.difference && affiliation.difference.amount
-                ? `S/. ${Number(affiliation.difference.amount).toFixed(2)}`
+                ? `Bs. ${Number(affiliation.difference.amount).toFixed(2)}`
                 : "-";
           } else {
             total =
               affiliation.plan && affiliation.plan.amount
-                ? `S/. ${Number(affiliation.plan.amount).toFixed(2)}`
+                ? `Bs. ${Number(affiliation.plan.amount).toFixed(2)}`
                 : "-";
           }
 
@@ -2023,9 +2023,9 @@ export default {
                 Producto: nombreProducto,
                 Cantidad: cantidad,
                 Categoría: categoria,
-                "Precio Unitario": precioProducto > 0 ? `S/. ${Number(precioProducto).toFixed(2)}` : "-",
+                "Precio Unitario": precioProducto > 0 ? `Bs. ${Number(precioProducto).toFixed(2)}` : "-",
                 "Puntos Unitarios": puntosProducto > 0 ? Number(puntosProducto).toFixed(2) : "-",
-                "Precio Total Producto": precioTotalProducto > 0 ? `S/. ${Number(precioTotalProducto).toFixed(2)}` : "-",
+                "Precio Total Producto": precioTotalProducto > 0 ? `Bs. ${Number(precioTotalProducto).toFixed(2)}` : "-",
                 "Puntos Total Producto": puntosTotalProducto > 0 ? Number(puntosTotalProducto).toFixed(2) : "-",
               });
             });

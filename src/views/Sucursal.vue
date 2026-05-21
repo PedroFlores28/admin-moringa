@@ -94,7 +94,7 @@ export default {
 
 
       // routing
-      this.$router.push('/affiliations/all')
+      this.$router.push('/affiliationBsall')
 
     },
     reset(name) {

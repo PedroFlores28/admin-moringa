@@ -649,7 +649,7 @@ export default {
     },
     formatCurrency(value) {
       if (!value) return "0.00";
-      return Number(value).toLocaleString("es-PE", {
+      return Number(value).toLocaleString("es-BO", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
@@ -661,11 +661,11 @@ export default {
       if (isNaN(parsedDate.getTime())) {
         return "Fecha inválida";
       }
-      return parsedDate.toLocaleDateString("es-PE");
+      return parsedDate.toLocaleDateString("es-BO");
     },
     formatNumber(value) {
       if (!value) return "0";
-      return Number(value).toLocaleString("es-PE");
+      return Number(value).toLocaleString("es-BO");
     },
   },
 };

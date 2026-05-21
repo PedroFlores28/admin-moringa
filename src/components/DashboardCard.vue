@@ -20,7 +20,7 @@
 
     <div class="card-content">
       <div class="card-value">
-        <span v-if="showCurrency" class="currency">S/.</span>
+        <span v-if="showCurrency" class="currency">Bs.</span>
         <span class="value">{{ formattedValue }}</span>
         <span v-if="unit" class="unit">{{ unit }}</span>
       </div>
@@ -149,11 +149,11 @@ export default {
     formattedValue() {
       if (typeof this.value === "number") {
         return this.showCurrency
-          ? this.value.toLocaleString("es-PE", {
+          ? this.value.toLocaleString("es-BO", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })
-          : this.value.toLocaleString("es-PE");
+          : this.value.toLocaleString("es-BO");
       }
       return this.value;
     },

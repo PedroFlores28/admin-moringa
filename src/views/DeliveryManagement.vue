@@ -33,7 +33,7 @@
       <div class="stat-card">
         <div class="stat-icon">💰</div>
         <div class="stat-content">
-          <h3>S/ {{ totalRevenue }}</h3>
+          <h3>Bs {{ totalRevenue }}</h3>
           <p>Ingresos Estimados</p>
         </div>
       </div>
@@ -77,7 +77,7 @@
               </div>
             </div>
             <div class="zone-content">
-              <div class="zone-price">S/ {{ zone.price.toFixed(2) }}</div>
+              <div class="zone-price">Bs {{ zone.price.toFixed(2) }}</div>
               <div class="zone-info">
                 <p><strong>ID:</strong> {{ zone.zone_id || zone._id }}</p>
                 <p><strong>Distritos:</strong> {{ zone.district_count }} asignados</p>
@@ -127,7 +127,7 @@
                 </td>
                 <td>
                   <span class="price-badge">
-                    S/ {{ district.zone_info ? district.zone_info.price.toFixed(2) : '0.00' }}
+                    Bs {{ district.zone_info ? district.zone_info.price.toFixed(2) : '0.00' }}
                   </span>
                 </td>
                 <td>
@@ -186,7 +186,7 @@
                 </td>
                 <td>
                   <span class="price-badge">
-                    S/ {{ district.zone_info ? district.zone_info.price.toFixed(2) : '0.00' }}
+                    Bs {{ district.zone_info ? district.zone_info.price.toFixed(2) : '0.00' }}
                   </span>
                 </td>
                 <td>
@@ -270,7 +270,7 @@
               <input v-model="zoneForm.zone_name" type="text" required placeholder="Ej: Zona Norte" />
             </div>
             <div class="form-group">
-              <label>Precio (S/)</label>
+              <label>Precio (Bs)</label>
               <input v-model="zoneForm.price" type="number" step="0.01" required placeholder="15.00" />
             </div>
             <div class="form-group">
@@ -342,7 +342,7 @@
               <select v-model="districtForm.zone_id" required>
                 <option value="">Selecciona una zona</option>
                 <option v-for="zone in zones" :key="zone._id" :value="zone._id">
-                  {{ zone.zone_name }} - S/ {{ zone.price.toFixed(2) }}
+                  {{ zone.zone_name }} - Bs {{ zone.price.toFixed(2) }}
                 </option>
               </select>
             </div>

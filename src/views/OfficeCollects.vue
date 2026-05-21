@@ -119,7 +119,7 @@ export default {
       this.loading = false
 
       // error
-      if(data.error && data.msg == 'invalid filter') this.$router.push('collects/all')
+      if(data.error && data.msg == 'invalid filter') this.$router.push('collectBsall')
 
       // success
       this.collects = data.collects

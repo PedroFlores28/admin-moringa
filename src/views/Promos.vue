@@ -182,7 +182,7 @@ export default {
       this.loading = false
 
       // error
-      if(data.error && data.msg == 'invalid filter') this.$router.push('promos/all')
+      if(data.error && data.msg == 'invalid filter') this.$router.push('promoBsall')
 
       // success
       this.promos = data.promos

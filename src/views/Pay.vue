@@ -23,14 +23,14 @@
                 <div class="stat-card">
                   <i class="fas fa-dollar-sign"></i>
                   <div class="stat-info">
-                    <span class="stat-value">S/. {{ paymentStats.total }}</span>
+                    <span class="stat-value">Bs. {{ paymentStats.total }}</span>
                     <span class="stat-label">Total</span>
                   </div>
                 </div>
                 <div class="stat-card">
                   <i class="fas fa-chart-line"></i>
                   <div class="stat-info">
-                    <span class="stat-value">S/. {{ paymentStats.average }}</span>
+                    <span class="stat-value">Bs. {{ paymentStats.average }}</span>
                     <span class="stat-label">Promedio</span>
                   </div>
                 </div>
@@ -202,7 +202,7 @@
                     </div>
                   </td>
                   <td class="amount-cell">
-                    <span class="amount">S/.{{ formatAmount(pay.value) }}</span>
+                    <span class="amount">Bs.{{ formatAmount(pay.value) }}</span>
                   </td>
                   <td class="desc-cell">
                     <span class="description">{{

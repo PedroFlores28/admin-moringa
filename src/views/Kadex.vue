@@ -237,11 +237,11 @@
                     <span v-else class="no-amount">-</span>
                   </td>
                   <td class="price-cell">
-                    <span class="price">S/. {{ formatPrice(item.price) }}</span>
+                    <span class="price">Bs. {{ formatPrice(item.price) }}</span>
                   </td>
                   <td class="total-cell">
                     <span class="total"
-                      >S/. {{ formatPrice(item.total_price) }}</span
+                      >Bs. {{ formatPrice(item.total_price) }}</span
                     >
                   </td>
                   <td class="balance-cell">

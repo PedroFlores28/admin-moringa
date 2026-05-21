@@ -95,7 +95,7 @@ export default {
                 label: function (context) {
                   return (
                     context.dataset.label +
-                    ": S/. " +
+                    ": Bs. " +
                     context.parsed.y.toFixed(2)
                   );
                 },
@@ -108,7 +108,7 @@ export default {
                     ? otherDataset.data[context.dataIndex]
                     : 0;
                   const grandTotal = total + otherValue;
-                  return "Total: S/. " + grandTotal.toFixed(2);
+                  return "Total: Bs. " + grandTotal.toFixed(2);
                 },
               },
             },
@@ -118,7 +118,7 @@ export default {
               beginAtZero: true,
               ticks: {
                 callback: function (value) {
-                  return "S/. " + value.toFixed(2);
+                  return "Bs. " + value.toFixed(2);
                 },
               },
             },

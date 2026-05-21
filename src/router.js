@@ -92,32 +92,32 @@ const routes = [
     meta: { requiresAuth: true, title: "Sesiones" },
   },
   {
-    path: "/users/:filter",
+    path: "/userBs:filter",
     component: Users,
     meta: { requiresAuth: true },
   },
   {
-    path: "/affiliations/:filter",
+    path: "/affiliationBs:filter",
     component: Affiliations,
     meta: { requiresAuth: true },
   },
   {
-    path: "/collects/:filter",
+    path: "/collectBs:filter",
     component: Collects,
     meta: { requiresAuth: true },
   },
   {
-    path: "/office-collects/:filter",
+    path: "/office-collectBs:filter",
     component: OfficeCollects,
     meta: { requiresAuth: true },
   },
   {
-    path: "/activations/:filter",
+    path: "/activationBs:filter",
     component: Activations,
     meta: { requiresAuth: true },
   },
   // {
-  //   path: '/promotions/:filter',
+  //   path: '/promotionBs:filter',
   //   path: '/promotions',
   //   component: Promos,
   //   meta: { requiresAuth: true }
@@ -149,7 +149,7 @@ const routes = [
   },
 
   {
-    path: "/operations/:filter",
+    path: "/operationBs:filter",
     component: Operations,
     meta: { requiresAuth: true },
   },

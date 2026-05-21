@@ -295,7 +295,7 @@ export default {
       audios: [],
       search: "",
       loading: false,
-      defaultImage: "https://api.sifrah.com/uploads/audios/default.png",
+      defaultImage: "https://api.sifrah.com/uploadBsaudioBsdefault.png",
       customCategories: [],
       modal: {
         active: false,

@@ -22,21 +22,21 @@
           <span class="summary-card__icon">💰</span>
           <div>
             <span class="summary-card__label">Total Bono Residual</span>
-            <strong class="summary-card__value">S/ {{ totalResidual.toFixed(2) }}</strong>
+            <strong class="summary-card__value">Bs {{ totalResidual.toFixed(2) }}</strong>
           </div>
         </div>
         <div class="summary-card">
           <span class="summary-card__icon">🌟</span>
           <div>
             <span class="summary-card__label">Total Bono Gen. VIP</span>
-            <strong class="summary-card__value">S/ {{ totalGenerationalBonus.toFixed(2) }}</strong>
+            <strong class="summary-card__value">Bs {{ totalGenerationalBonus.toFixed(2) }}</strong>
           </div>
         </div>
         <div class="summary-card">
           <span class="summary-card__icon">🎁</span>
           <div>
             <span class="summary-card__label">Total Bono Ahorro Sifrah</span>
-            <strong class="summary-card__value">S/ {{ totalSavingsBonus.toFixed(2) }}</strong>
+            <strong class="summary-card__value">Bs {{ totalSavingsBonus.toFixed(2) }}</strong>
           </div>
         </div>
         <div class="summary-card">
@@ -57,7 +57,7 @@
           <span class="summary-card__icon">🏆</span>
           <div>
             <span class="summary-card__label">Bono logro / mant. rango (preview)</span>
-            <strong class="summary-card__value">S/ {{ totalRankBonus.toFixed(2) }}</strong>
+            <strong class="summary-card__value">Bs {{ totalRankBonus.toFixed(2) }}</strong>
             <span
               v-if="totalRankBonus > 0"
               class="summary-card__sub"
@@ -68,14 +68,14 @@
           <span class="summary-card__icon">📌</span>
           <div>
             <span class="summary-card__label">Total preview (residual + gen + ahorro + rango)</span>
-            <strong class="summary-card__value">S/ {{ totalPreviewCierre.toFixed(2) }}</strong>
+            <strong class="summary-card__value">Bs {{ totalPreviewCierre.toFixed(2) }}</strong>
           </div>
         </div>
         <div class="summary-card summary-card--warn" v-if="virtualResets.length">
           <span class="summary-card__icon">🧹</span>
           <div>
             <span class="summary-card__label">Saldo no disponible a quitar</span>
-            <strong class="summary-card__value">S/ {{ totalVirtualReset.toFixed(2) }}</strong>
+            <strong class="summary-card__value">Bs {{ totalVirtualReset.toFixed(2) }}</strong>
             <span class="summary-card__sub">{{ virtualResets.length }} usuario(s)</span>
           </div>
         </div>
@@ -97,7 +97,7 @@
                 <th>#</th>
                 <th>Nombre</th>
                 <th>DNI</th>
-                <th>Monto a quitar (S/)</th>
+                <th>Monto a quitar (Bs)</th>
               </tr>
             </thead>
             <tbody>
@@ -105,7 +105,7 @@
                 <td class="td-num">{{ ri + 1 }}</td>
                 <td class="td-name">{{ row.name || '—' }}</td>
                 <td>{{ row.dni || '—' }}</td>
-                <td class="td-bonus td-bonus--out">S/ {{ Number(row.amount || 0).toFixed(2) }}</td>
+                <td class="td-bonus td-bonus--out">Bs {{ Number(row.amount || 0).toFixed(2) }}</td>
               </tr>
             </tbody>
           </table>
@@ -165,7 +165,7 @@
                 <td><span class="rank-badge" :class="rankClass(node.rank)">{{ node.rank }}</span></td>
                 <td class="td-bonus td-bonus--detail">
                   <template v-if="node.residual_bonus > 0">
-                    <strong>S/ {{ node.residual_bonus.toFixed(2) }}</strong>
+                    <strong>Bs {{ node.residual_bonus.toFixed(2) }}</strong>
                     <ul
                       v-if="node.residual_lines && node.residual_lines.length"
                       class="residual-lines"
@@ -176,7 +176,7 @@
                         <span class="residual-lines__meta">· DNI {{ ln.dni || '—' }}</span>
                         <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
                         <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                        <span class="residual-lines__amt">→ S/ {{ Number(ln.amount || 0).toFixed(2) }}</span>
+                        <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
                       </li>
                     </ul>
                   </template>
@@ -184,7 +184,7 @@
                 </td>
                 <td class="td-bonus td-bonus--detail">
                   <template v-if="node.generational_bonus > 0">
-                    <strong>S/ {{ node.generational_bonus.toFixed(2) }}</strong>
+                    <strong>Bs {{ node.generational_bonus.toFixed(2) }}</strong>
                     <ul
                       v-if="node.generational_lines && node.generational_lines.length"
                       class="residual-lines"
@@ -195,7 +195,7 @@
                         <span class="residual-lines__meta">· DNI {{ ln.dni || '—' }}</span>
                         <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
                         <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                        <span class="residual-lines__amt">→ S/ {{ Number(ln.amount || 0).toFixed(2) }}</span>
+                        <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
                       </li>
                     </ul>
                   </template>
@@ -203,17 +203,17 @@
                 </td>
                 <td class="td-bonus td-bonus--detail">
                   <template v-if="node.savings_bonus > 0">
-                    <strong>S/ {{ node.savings_bonus.toFixed(2) }}</strong>
+                    <strong>Bs {{ node.savings_bonus.toFixed(2) }}</strong>
                   </template>
                   <span v-else class="td-zero">—</span>
                 </td>
                 <td class="td-rank-bonus">
                   <template v-if="(node.rank_bonus_total || 0) > 0">
-                    <strong>S/ {{ Number(node.rank_bonus_total).toFixed(2) }}</strong>
+                    <strong>Bs {{ Number(node.rank_bonus_total).toFixed(2) }}</strong>
                     <ul v-if="node.rank_bonus_lines && node.rank_bonus_lines.length" class="rank-bonus-lines">
                       <li v-for="(ln, li) in node.rank_bonus_lines" :key="li">
                         <span class="rank-bonus-tipo">{{ ln.tipo }}</span>
-                        {{ ln.rank }} · S/ {{ Number(ln.amount).toFixed(2) }}
+                        {{ ln.rank }} · Bs {{ Number(ln.amount).toFixed(2) }}
                       </li>
                     </ul>
                   </template>
@@ -264,7 +264,7 @@
                 class="chip chip--accent"
                 v-if="cl.data && cl.data.rank_bonus_total != null && Number(cl.data.rank_bonus_total) > 0"
               >
-                🏆 rango S/ {{ Number(cl.data.rank_bonus_total).toFixed(2) }}
+                🏆 rango Bs {{ Number(cl.data.rank_bonus_total).toFixed(2) }}
               </span>
             </div>
           </div>
@@ -320,7 +320,7 @@
                   <td><span class="rank-badge" :class="rankClass(user.rank)">{{ user.rank }}</span></td>
                   <td class="td-bonus td-bonus--detail">
                     <template v-if="user.residual_bonus > 0">
-                      <strong>S/ {{ user.residual_bonus.toFixed(2) }}</strong>
+                      <strong>Bs {{ user.residual_bonus.toFixed(2) }}</strong>
                       <ul
                         v-if="user.residual_lines && user.residual_lines.length"
                         class="residual-lines residual-lines--compact"
@@ -330,7 +330,7 @@
                           {{ ln.name || '—' }}
                           <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
                           <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                          <span class="residual-lines__amt">→ S/ {{ Number(ln.amount || 0).toFixed(2) }}</span>
+                          <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
                         </li>
                       </ul>
                     </template>
@@ -338,7 +338,7 @@
                   </td>
                   <td class="td-bonus td-bonus--detail">
                     <template v-if="user.generational_bonus > 0">
-                      <strong>S/ {{ user.generational_bonus.toFixed(2) }}</strong>
+                      <strong>Bs {{ user.generational_bonus.toFixed(2) }}</strong>
                       <ul
                         v-if="user.generational_lines && user.generational_lines.length"
                         class="residual-lines residual-lines--compact"
@@ -348,7 +348,7 @@
                           {{ ln.name || '—' }}
                           <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
                           <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                          <span class="residual-lines__amt">→ S/ {{ Number(ln.amount || 0).toFixed(2) }}</span>
+                          <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
                         </li>
                       </ul>
                     </template>
@@ -356,17 +356,17 @@
                   </td>
                   <td class="td-bonus td-bonus--detail">
                     <template v-if="user.savings_bonus > 0">
-                      <strong>S/ {{ user.savings_bonus.toFixed(2) }}</strong>
+                      <strong>Bs {{ user.savings_bonus.toFixed(2) }}</strong>
                     </template>
                     <span v-else class="td-zero">—</span>
                   </td>
                   <td class="td-rank-bonus">
                     <template v-if="rankBonusForUser(cl, user.user_id || user.userId).total > 0">
-                      <strong>S/ {{ rankBonusForUser(cl, user.user_id || user.userId).total.toFixed(2) }}</strong>
+                      <strong>Bs {{ rankBonusForUser(cl, user.user_id || user.userId).total.toFixed(2) }}</strong>
                       <ul class="rank-bonus-lines">
                         <li v-for="(ln, li) in rankBonusForUser(cl, user.user_id || user.userId).lines" :key="`hist-rb-${ci}-${i}-${li}`">
                           <span class="rank-bonus-tipo">{{ ln.tipo }}</span>
-                          {{ ln.rank }} · S/ {{ Number(ln.amount).toFixed(2) }}
+                          {{ ln.rank }} · Bs {{ Number(ln.amount).toFixed(2) }}
                         </li>
                       </ul>
                     </template>
@@ -389,7 +389,7 @@
                     <th>#</th>
                     <th>Nombre</th>
                     <th>DNI</th>
-                    <th>Monto quitado (S/)</th>
+                    <th>Monto quitado (Bs)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -397,7 +397,7 @@
                     <td class="td-num">{{ vi + 1 }}</td>
                     <td class="td-name">{{ vr.name || '—' }}</td>
                     <td>{{ vr.dni || '—' }}</td>
-                    <td class="td-bonus td-bonus--out">S/ {{ Number(vr.amount || 0).toFixed(2) }}</td>
+                    <td class="td-bonus td-bonus--out">Bs {{ Number(vr.amount || 0).toFixed(2) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -497,7 +497,7 @@ export default {
   },
   filters: {
     date(val) {
-      return new Date(val).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' })
+      return new Date(val).toLocaleDateString('es-BO', { year: 'numeric', month: 'long', day: 'numeric' })
     },
   },
   computed: {
@@ -667,7 +667,7 @@ export default {
           const lines = (rb.applied || []).length
           const logro = rb.logro_count != null ? rb.logro_count : (rb.applied || []).filter(x => x.tipo === 'logro').length
           const mant  = rb.mantenimiento_count != null ? rb.mantenimiento_count : (rb.applied || []).filter(x => x.tipo === 'mantenimiento').length
-          extra = `\nBonos rango aplicados: S/ ${rb.totalAmount.toFixed(2)} (${lines} líneas; logro=${logro}, mant=${mant}).`
+          extra = `\nBonos rango aplicados: Bs ${rb.totalAmount.toFixed(2)} (${lines} líneas; logro=${logro}, mant=${mant}).`
           if (lines === 0) {
             extra += `\nNota: si en preview viste bonos pero aquí sale 0, revisa DB_URL/DB_NAME (Node) vs DB_URL_DEV/PROD (Go) y/o RankBonusPayment histórico.`
           }

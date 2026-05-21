@@ -253,9 +253,9 @@ export default {
       const d = new Date(date);
       if (isNaN(d)) return String(date);
       return (
-        d.toLocaleDateString("es-PE") +
+        d.toLocaleDateString("es-BO") +
         " " +
-        d.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })
+        d.toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" })
       );
     },
     async refresh() {

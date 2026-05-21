@@ -32,7 +32,7 @@
           <!-- Tabs: Afiliaciones / Activaciones / Vouchers -->
           <div class="section-tabs" role="tablist" aria-label="Navegación Afiliaciones">
             <router-link
-              to="/affiliations/all"
+              to="/affiliationBsall"
               class="section-tab"
               :class="{ 'is-active': $route.path.startsWith('/affiliations') }"
               role="tab"
@@ -41,7 +41,7 @@
               Afiliaciones
             </router-link>
             <router-link
-              to="/activations/all"
+              to="/activationBsall"
               class="section-tab"
               :class="{ 'is-active': $route.path.startsWith('/activations') }"
               role="tab"
@@ -208,7 +208,7 @@
               >{{ paymentSplitDisplay(row.raw).modeLabel }}</span>
               <template v-if="paymentSplitDisplay(row.raw).aggregateBalanceDisplay">
                 <small style="color:#374151; font-weight:700;">
-                  Saldo disp.: S/
+                  Saldo disp.: Bs
                   {{ paymentSplitDisplay(row.raw).totalInternalPaid.toFixed(2) }}
                 </small>
               </template>
@@ -216,13 +216,13 @@
                 <small
                   v-if="paymentSplitDisplay(row.raw).paid_virtual > 0"
                   style="color:#6b7280;"
-                >No disp.: S/ {{ paymentSplitDisplay(row.raw).paid_virtual.toFixed(2) }}</small>
+                >No disp.: Bs {{ paymentSplitDisplay(row.raw).paid_virtual.toFixed(2) }}</small>
                 <small style="color:#374151; font-weight:700;">
-                  Saldo disp.: S/ {{ paymentSplitDisplay(row.raw).paid_balance.toFixed(2) }}
+                  Saldo disp.: Bs {{ paymentSplitDisplay(row.raw).paid_balance.toFixed(2) }}
                 </small>
               </template>
               <small style="color:#6b7280;">
-                Faltante: S/ {{ paymentSplitDisplay(row.raw).due.toFixed(2) }}
+                Faltante: Bs {{ paymentSplitDisplay(row.raw).due.toFixed(2) }}
               </small>
             </div>
           </template>
@@ -520,13 +520,13 @@
                   </div>
                   <div class="detail-item">
                     <span class="detail-label"><i class="fas fa-money-bill"></i> Precio de delivery:</span>
-                    <span class="detail-value">{{ (selectedActivation.delivery_info.delivery_price != null) ? `S/. ${Number(selectedActivation.delivery_info.delivery_price).toFixed(2)}` : '-' }}</span>
+                    <span class="detail-value">{{ (selectedActivation.delivery_info.delivery_price != null) ? `Bs. ${Number(selectedActivation.delivery_info.delivery_price).toFixed(2)}` : '-' }}</span>
                   </div>
 
                   <!-- Zona (para Lima) -->
                   <div class="detail-item" v-if="selectedActivation.delivery_info.zone_info">
                     <span class="detail-label"><i class="fas fa-map"></i> Zona:</span>
-                    <span class="detail-value">{{ selectedActivation.delivery_info.zone_info.zone_name }} ({{ selectedActivation.delivery_info.zone_info.zone_id }}) - S/. {{ Number(selectedActivation.delivery_info.zone_info.zone_price || 0).toFixed(2) }}</span>
+                    <span class="detail-value">{{ selectedActivation.delivery_info.zone_info.zone_name }} ({{ selectedActivation.delivery_info.zone_info.zone_id }}) - Bs. {{ Number(selectedActivation.delivery_info.zone_info.zone_price || 0).toFixed(2) }}</span>
                   </div>
 
                   <!-- Agencia (para envíos nacionales) -->
@@ -886,7 +886,7 @@ export default {
           if (periodByDate && periodByDate.label) {
             periodLabel = periodByDate.label;
           } else {
-            // Fallback: derivar del mes/año si no se encuentra período
+            // Fallback: derivar del meBsaño si no se encuentra período
             const derivedPeriod = this.derivePeriodFromDate(activation.date);
             periodLabel = derivedPeriod.label;
           }
@@ -983,12 +983,12 @@ export default {
             
             // Solo mostrar si no se mostró ya por la lógica anterior
             if (activationDate && closedAt && activationDate >= closedAt && !shownSeparators.has(separatorKey)) {
-              const closedDate = closedAt.toLocaleDateString("es-PE", {
+              const closedDate = closedAt.toLocaleDateString("es-BO", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
               });
-              const closedTime = closedAt.toLocaleTimeString("es-PE", {
+              const closedTime = closedAt.toLocaleTimeString("es-BO", {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: true,
@@ -1082,12 +1082,12 @@ export default {
         // Si esta activación tiene marcado que debe mostrar un separador antes, insertarlo primero
         if (activation._showSeparatorBefore) {
           const { period: closedPeriod, closedAt } = activation._showSeparatorBefore;
-          const closedDate = closedAt.toLocaleDateString("es-PE", {
+          const closedDate = closedAt.toLocaleDateString("es-BO", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
           });
-          const closedTime = closedAt.toLocaleTimeString("es-PE", {
+          const closedTime = closedAt.toLocaleTimeString("es-BO", {
             hour: "2-digit",
             minute: "2-digit",
             hour12: true,
@@ -1526,11 +1526,11 @@ export default {
 
     formatBalanceObj(balance) {
       if (!balance) return "-";
-      return `Disponible: S/. ${Number(balance.available).toFixed(
+      return `Disponible: Bs. ${Number(balance.available).toFixed(
         2
-      )}, No disponible: S/. ${Number(balance.notAvailable).toFixed(
+      )}, No disponible: Bs. ${Number(balance.notAvailable).toFixed(
         2
-      )}, Por cobrar: S/. ${Number(balance.toCollect).toFixed(2)}`;
+      )}, Por cobrar: Bs. ${Number(balance.toCollect).toFixed(2)}`;
     },
 
     async handleTableAction(action) {
@@ -1743,7 +1743,7 @@ export default {
           if (activation.date) {
             const d = new Date(activation.date);
             if (!isNaN(d)) {
-              fecha = d.toLocaleDateString("es-PE", {
+              fecha = d.toLocaleDateString("es-BO", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
@@ -1777,11 +1777,11 @@ export default {
           // Formatear saldo
           const balance = this.formatBalance(activation);
           const saldo = balance
-            ? `Disponible: S/. ${Number(balance.available).toFixed(
+            ? `Disponible: Bs. ${Number(balance.available).toFixed(
                 2
-              )}, No disponible: S/. ${Number(balance.notAvailable).toFixed(
+              )}, No disponible: Bs. ${Number(balance.notAvailable).toFixed(
                 2
-              )}, Por cobrar: S/. ${Number(balance.toCollect).toFixed(2)}`
+              )}, Por cobrar: Bs. ${Number(balance.toCollect).toFixed(2)}`
             : "-";
 
           // Formatear estado
@@ -1802,7 +1802,7 @@ export default {
             activation.price !== "" &&
             !isNaN(Number(activation.price))
           ) {
-            precioTotal = `S/. ${Number(activation.price).toFixed(2)}`;
+            precioTotal = `Bs. ${Number(activation.price).toFixed(2)}`;
           }
 
           let puntosTotal = "-";
@@ -1854,9 +1854,9 @@ export default {
                   Producto: nombreProducto,
                   Cantidad: cantidad,
                   Categoría: categoria,
-                  "Precio Unitario": precioProducto > 0 ? `S/. ${Number(precioProducto).toFixed(2)}` : "-",
+                  "Precio Unitario": precioProducto > 0 ? `Bs. ${Number(precioProducto).toFixed(2)}` : "-",
                   "Puntos Unitarios": puntosProducto > 0 ? Number(puntosProducto).toFixed(2) : "-",
-                  "Precio Total Producto": precioTotalProducto > 0 ? `S/. ${Number(precioTotalProducto).toFixed(2)}` : "-",
+                  "Precio Total Producto": precioTotalProducto > 0 ? `Bs. ${Number(precioTotalProducto).toFixed(2)}` : "-",
                   "Puntos Total Producto": puntosTotalProducto > 0 ? Number(puntosTotalProducto).toFixed(2) : "-",
                 });
               });

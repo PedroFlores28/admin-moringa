@@ -48,7 +48,7 @@
                   }}
                 </div>
               </td>
-              <td>S/. {{ Number(item.closure_bonus_total || 0).toFixed(2) }} ({{ item.closure_bonus_count || 0 }})</td>
+              <td>Bs. {{ Number(item.closure_bonus_total || 0).toFixed(2) }} ({{ item.closure_bonus_count || 0 }})</td>
               <td>{{ formatDate(item.closure_bonus_last_date) }}</td>
             </tr>
             <tr v-if="!items.length && !loading">
@@ -121,7 +121,7 @@ export default {
       if (!v) return "-";
       const d = new Date(v);
       if (isNaN(d.getTime())) return "-";
-      return d.toLocaleString("es-PE");
+      return d.toLocaleString("es-BO");
     },
     formatPeriod(v) {
       if (!v) return "-";

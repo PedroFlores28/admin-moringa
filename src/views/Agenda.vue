@@ -216,7 +216,7 @@
                   <div class="field">
                     <label class="label">7. Enlace o Dirección</label>
                     <div class="control has-icons-left">
-                      <input class="input" type="text" v-model="form.link" placeholder="https://zoom.us/... o Dirección" />
+                      <input class="input" type="text" v-model="form.link" placeholder="https://zoom.uBs... o Dirección" />
                       <span class="icon is-small is-left"><i class="fas fa-link"></i></span>
                     </div>
                   </div>

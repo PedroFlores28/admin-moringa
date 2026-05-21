@@ -125,7 +125,7 @@ export default {
       if (!v) return "-";
       const d = new Date(v);
       if (isNaN(d.getTime())) return String(v);
-      return d.toLocaleString("es-PE", { dateStyle: "short", timeStyle: "medium" });
+      return d.toLocaleString("es-BO", { dateStyle: "short", timeStyle: "medium" });
     },
     statusLabel(s) {
       const closed = !!(s && (s.closedAt || s.revokedAt));

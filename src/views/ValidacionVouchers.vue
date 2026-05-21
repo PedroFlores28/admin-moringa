@@ -19,7 +19,7 @@
           <!-- Tabs: Afiliaciones / Activaciones / Vouchers -->
           <div class="section-tabs" role="tablist" aria-label="Navegación Afiliaciones">
             <router-link
-              to="/affiliations/all"
+              to="/affiliationBsall"
               class="section-tab"
               :class="{ 'is-active': $route.path.startsWith('/affiliations') }"
               role="tab"
@@ -28,7 +28,7 @@
               Afiliaciones
             </router-link>
             <router-link
-              to="/activations/all"
+              to="/activationBsall"
               class="section-tab"
               :class="{ 'is-active': $route.path.startsWith('/activations') }"
               role="tab"
@@ -86,7 +86,7 @@
           </template>
 
           <template #cell-total="{ value }">
-            <span style="font-weight:800;">S/ {{ Number(value || 0).toFixed(2) }}</span>
+            <span style="font-weight:800;">Bs {{ Number(value || 0).toFixed(2) }}</span>
           </template>
 
           <template #cell-payment="{ row }">
@@ -107,10 +107,10 @@
                 {{ modeLabel(row.payment_breakdown.mode) }}
               </span>
               <small v-if="row.payment_breakdown.paid_balance > 0" style="color:#374151; font-weight:700;">
-                Saldo: S/ {{ Number(row.payment_breakdown.paid_balance).toFixed(2) }}
+                Saldo: Bs {{ Number(row.payment_breakdown.paid_balance).toFixed(2) }}
               </small>
               <small style="color:#6b7280;">
-                Faltante: S/ {{ Number(row.payment_breakdown.due).toFixed(2) }}
+                Faltante: Bs {{ Number(row.payment_breakdown.due).toFixed(2) }}
               </small>
             </div>
           </template>

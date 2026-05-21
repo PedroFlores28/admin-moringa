@@ -11,33 +11,41 @@
       <div class="logic-container">
         <div class="logic-grid">
           
-          <!-- 1. Bono de Afiliación (Directo e Indirecto) -->
+          <!-- 1. Bono de Afiliación Class Moringa -->
           <div class="logic-card wide">
-            <h3><i class="fas fa-user-plus"></i> Bono de Afiliación (Inicio Rápido)</h3>
-            <p class="logic-desc">Pagos fijos distribuidos hasta 9 niveles según el paquete con el que se afilia el nuevo socio.</p>
-            <div class="table-scroll">
-              <table class="mini-table">
-                <thead>
-                  <tr>
-                    <th>Nivel</th>
-                    <th>Paquete Ejecutivo (Basic)</th>
-                    <th>Paquete Distribuidor (Standard)</th>
-                    <th>Paquete Empresario (Master)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="n in 9" :key="n">
-                    <td><strong>Nivel {{ n }}</strong></td>
-                    <td :class="{ 'inactive-cell': n > 3 }">S/ {{ affiliationLogic.basic[n-1] }} <small v-if="n > 3">(No aplica)</small></td>
-                    <td :class="{ 'inactive-cell': n > 6 }">S/ {{ affiliationLogic.standard[n-1] }} <small v-if="n > 6">(No aplica)</small></td>
-                    <td>S/ {{ affiliationLogic.master[n-1] }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <h3><i class="fas fa-user-plus"></i> Bono de Afiliación (Class Moringa)</h3>
+            <p class="logic-desc">
+              Al aprobarse una afiliación (paquete Bs. 480 o Bs. 500), el patrocinador directo recibe un bono fijo si está activo.
+            </p>
+            <table class="mini-table">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Regla</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Monto</strong></td>
+                  <td class="amount-val">Bs. {{ affiliationDirectBonus }} (fijo por afiliación)</td>
+                </tr>
+                <tr>
+                  <td><strong>Profundidad</strong></td>
+                  <td>Solo patrocinador directo (1 nivel)</td>
+                </tr>
+                <tr>
+                  <td><strong>Paquetes</strong></td>
+                  <td>CLASS (Bs. 480) y EMPRESARIO (Bs. 500)</td>
+                </tr>
+                <tr>
+                  <td><strong>Patrocinador activo</strong></td>
+                  <td>Reconsumo activo (≥ 120 pts) o afiliación aprobada en el mes</td>
+                </tr>
+              </tbody>
+            </table>
             <div class="logic-note">
               <i class="fas fa-info-circle"></i>
-              <span>Nota: La profundidad de cobro depende de TU plan actual (Ejecutivo: 3 niv, Distribuidor: 6 niv, Empresario: 9 niv).</span>
+              <span>Si el patrocinador directo no está activo, no se genera el bono (no se paga a niveles superiores).</span>
             </div>
           </div>
 
@@ -74,11 +82,11 @@
                 <tbody>
                   <tr v-for="(v, rank) in rankBonusTable" :key="rank">
                     <td><span :class="['rank-tag', rankClass(rank)]">{{ rank }}</span></td>
-                    <td class="amount-val">S/ {{ v.logro }}</td>
+                    <td class="amount-val">Bs {{ v.logro }}</td>
                     <td :class="{ 'zero-pct': v.maintenance === 0 }">
-                      {{ v.maintenance > 0 ? 'S/ ' + v.maintenance : '-' }}
+                      {{ v.maintenance > 0 ? 'Bs ' + v.maintenance : '-' }}
                     </td>
-                    <td>S/ {{ v.cap }}</td>
+                    <td>Bs {{ v.cap }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -92,7 +100,10 @@
           <!-- 4. Bono Residual -->
           <div class="logic-card wide">
             <h3><i class="fas fa-chart-pie"></i> Tabla de Porcentajes Residuales</h3>
-            <p class="logic-desc">Porcentajes pagados sobre el reconsumo (PR) según el rango cerrado. Se aplica compresión dinámica.</p>
+            <p class="logic-desc">
+              Porcentajes pagados sobre el volumen residual del periodo: suma de (cantidad × ganancia por residual de cada producto en Bs).
+              Si no hay ganancias configuradas en productos, se usa el PR en puntos como respaldo. Compresión dinámica.
+            </p>
             <div class="table-scroll">
               <table class="mini-table compact">
                 <thead>
@@ -154,11 +165,7 @@ export default {
   components: { Layout },
   data() {
     return {
-      affiliationLogic: {
-        basic: [90, 15, 10, 5, 5, 1, 1, 1, 1],
-        standard: [300, 60, 20, 10, 10, 5, 5, 5, 5],
-        master: [500, 100, 100, 50, 50, 10, 10, 10, 10]
-      },
+      affiliationDirectBonus: 120,
       rankBonusTable: {
         "PLATA": { cap: 200, logro: 200, maintenance: 0 },
         "ORO": { cap: 300, logro: 300, maintenance: 0 },

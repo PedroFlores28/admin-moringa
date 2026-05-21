@@ -508,13 +508,13 @@ export default {
     },
     formatCurrency(value) {
       // Si el valor ya es una cadena formateada, devolverlo tal como está
-      if (typeof value === "string" && value.includes("S/")) {
+      if (typeof value === "string" && value.includes("Bs")) {
         return value;
       }
 
       // Si el valor es null, undefined, o una cadena vacía
       if (value === null || value === undefined || value === "") {
-        return "S/ 0.00";
+        return "Bs 0.00";
       }
 
       // Intentar convertir a número
@@ -522,13 +522,13 @@ export default {
 
       if (isNaN(numValue)) {
         console.warn("Invalid number value for currency formatting:", value);
-        return "S/ 0.00";
+        return "Bs 0.00";
       }
 
       // Formatear el número
-      return numValue.toLocaleString("es-PE", {
+      return numValue.toLocaleString("es-BO", {
         style: "currency",
-        currency: "PEN",
+        currency: "BOB",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });

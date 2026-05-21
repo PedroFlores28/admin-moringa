@@ -405,19 +405,19 @@
       </div>
       <div class="menu-content">
         <div v-if="activeMenu === 'users'" class="menu-items">
-          <a class="menu-item" href="/users/all" @click="closeMenu">
+          <a class="menu-item" href="/userBsall" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-list"></i>
             </span>
             <span>Todos los Usuarios</span>
           </a>
-          <a class="menu-item" href="/users/affiliated" @click="closeMenu">
+          <a class="menu-item" href="/userBsaffiliated" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-user-plus"></i>
             </span>
             <span>Usuarios Afiliados</span>
           </a>
-          <a class="menu-item" href="/users/activated" @click="closeMenu">
+          <a class="menu-item" href="/userBsactivated" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-user-check"></i>
             </span>
@@ -432,13 +432,13 @@
         </div>
 
         <div v-if="activeMenu === 'affiliations'" class="menu-items">
-          <a class="menu-item" href="/affiliations/all" @click="closeMenu">
+          <a class="menu-item" href="/affiliationBsall" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-list"></i>
             </span>
             <span>Todas las Afiliaciones</span>
           </a>
-          <a class="menu-item" href="/affiliations/pending" @click="closeMenu">
+          <a class="menu-item" href="/affiliationBspending" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-clock"></i>
             </span>
@@ -447,13 +447,13 @@
         </div>
 
         <div v-if="activeMenu === 'collects'" class="menu-items">
-          <a class="menu-item" href="/collects/all" @click="closeMenu">
+          <a class="menu-item" href="/collectBsall" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-list"></i>
             </span>
             <span>Todos los Retiros</span>
           </a>
-          <a class="menu-item" href="/collects/pending" @click="closeMenu">
+          <a class="menu-item" href="/collectBspending" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-clock"></i>
             </span>
@@ -489,7 +489,7 @@
             </span>
             <span>Productos de Oficina</span>
           </a>
-          <a class="menu-item" href="/office-collects/all" @click="closeMenu">
+          <a class="menu-item" href="/office-collectBsall" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-money-bill-wave"></i>
             </span>
@@ -498,13 +498,13 @@
         </div>
 
         <div v-if="activeMenu === 'operations'" class="menu-items">
-          <a class="menu-item" href="/operations/plan" @click="closeMenu">
+          <a class="menu-item" href="/operationBsplan" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-handshake"></i>
             </span>
             <span>Nueva Afiliación</span>
           </a>
-          <a class="menu-item" href="/operations/products" @click="closeMenu">
+          <a class="menu-item" href="/operationBsproducts" @click="closeMenu">
             <span class="icon">
               <i class="fas fa-box"></i>
             </span>

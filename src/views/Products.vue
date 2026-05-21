@@ -193,7 +193,7 @@
             </div>
 
             <div class="field">
-              <label class="label">Precio en Soles (para el canje) <span class="has-text-danger">*</span></label>
+              <label class="label">Precio en bolivianos (para el canje) <span class="has-text-danger">*</span></label>
               <div class="control">
                 <input class="input" type="number" v-model.number="newSavingsProduct.savings_price" placeholder="0.00" />
               </div>
@@ -333,6 +333,21 @@
                 </div>
               </div>
 
+              <div v-if="newProduct.catalog_type !== 'savings'" class="field">
+                <label class="label">Ganancia por Residual (Bs)</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    v-model.number="newProduct.residual_profit"
+                    placeholder="Ej: 2, 5, 10"
+                  />
+                </div>
+                <p class="help">Monto en bolivianos que aporta cada unidad vendida al cálculo de comisiones residuales.</p>
+              </div>
+
               <div class="field">
                 <label class="label">Peso</label>
                 <div class="control">
@@ -406,7 +421,7 @@
 
               <div v-if="newProduct.is_savings_bonus" class="form-grid">
                 <div class="field">
-                  <label class="label">Precio Bono Ahorro (S/)</label>
+                  <label class="label">Precio Bono Ahorro (Bs)</label>
                   <div class="control">
                     <input class="input" type="number" v-model.number="newProduct.savings_price" placeholder="Precio en el bono">
                   </div>
@@ -550,6 +565,21 @@
                 </div>
               </div>
 
+              <div v-if="editingProduct.catalog_type !== 'savings'" class="field">
+                <label class="label">Ganancia por Residual (Bs)</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    v-model.number="editingProduct.residual_profit"
+                    placeholder="Ej: 2, 5, 10"
+                  />
+                </div>
+                <p class="help">Monto en bolivianos que aporta cada unidad vendida al cálculo de comisiones residuales.</p>
+              </div>
+
               <div class="field">
                 <label class="label">Peso</label>
                 <div class="control">
@@ -627,7 +657,7 @@
 
               <div v-if="editingProduct.is_savings_bonus" class="form-grid">
                 <div class="field">
-                  <label class="label">Precio Bono Ahorro (S/)</label>
+                  <label class="label">Precio Bono Ahorro (Bs)</label>
                   <div class="control">
                     <input class="input" type="number" v-model.number="editingProduct.savings_price" placeholder="Precio en el bono">
                   </div>
@@ -716,11 +746,11 @@
                     <p class="has-text-weight-bold">{{ product.name }}</p>
                     <p class="is-size-7">{{ product.code }}</p>
                   </td>
-                  <td>S/ {{ product.price }}</td>
+                  <td>Bs {{ product.price }}</td>
                   <td>
                     <div class="field has-addons">
                       <p class="control">
-                        <a class="button is-static is-small">S/</a>
+                        <a class="button is-static is-small">Bs</a>
                       </p>
                       <p class="control">
                         <input class="input is-small" type="number" v-model.number="product.savings_price" :disabled="!product.is_savings_bonus">
@@ -774,6 +804,7 @@ export default {
         subdescription: "",
         price: 0,
         points: 0,
+        residual_profit: 0,
         weight: 0,
         img: "",
         plans: {},
@@ -792,6 +823,7 @@ export default {
         subdescription: "",
         price: 0,
         points: 0,
+        residual_profit: 0,
         weight: 0,
         img: "",
         plans: {},
@@ -845,6 +877,12 @@ export default {
           label: "Puntos",
           sortable: true,
           type: "number",
+        },
+        {
+          key: "residual_profit",
+          label: "Ganancia Residual",
+          sortable: true,
+          type: "currency",
         },
         {
           key: "weight",
@@ -1107,6 +1145,7 @@ export default {
         _type: product.type,
         _price: product.price,
         _points: product.points || 0,
+        residual_profit: Number(product.residual_profit) || 0,
         _img: product.img || "",
         _code: product.code || "",
         _description: product.description || "",
@@ -1276,6 +1315,7 @@ export default {
         subdescription: prod.subdescription || "",
         price: prod.price || 0,
         points: prod.points || 0,
+        residual_profit: Number(prod.residual_profit) || 0,
         weight: prod.weight || 0,
         img: prod.img || "",
         id: prod.id || "",
@@ -1378,6 +1418,7 @@ export default {
             type: this.newProduct.type,
             price: this.newProduct.price,
             points: this.newProduct.points,
+            residual_profit: Number(this.newProduct.residual_profit) || 0,
             img: this.newProduct.img,
             description: this.newProduct.description,
             subdescription: this.newProduct.subdescription,
@@ -1422,6 +1463,7 @@ export default {
         subdescription: "",
         price: 0,
         points: 0,
+        residual_profit: 0,
         weight: 0,
         img: "",
         plans: {},
@@ -1479,6 +1521,7 @@ export default {
           _type: this.editingProduct.type,
           _price: this.editingProduct.price,
           _points: this.editingProduct.points,
+          residual_profit: Number(this.editingProduct.residual_profit) || 0,
           _img: this.editingProduct.img,
           _code: this.editingProduct.code,
           _description: this.editingProduct.description,

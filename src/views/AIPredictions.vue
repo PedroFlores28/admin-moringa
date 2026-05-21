@@ -248,11 +248,11 @@
             <div class="detail-section">
               <h4>Actividad</h4>
               <div class="detail-item">
-                <span class="label">Activaciones/mes:</span>
+                <span class="label">ActivacioneBsmes:</span>
                 <span class="value">{{ selectedUser.monthly_activations }}</span>
               </div>
               <div class="detail-item">
-                <span class="label">Afiliaciones/mes:</span>
+                <span class="label">AfiliacioneBsmes:</span>
                 <span class="value">{{ selectedUser.monthly_affiliations }}</span>
               </div>
               <div class="detail-item">

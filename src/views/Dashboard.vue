@@ -20,7 +20,7 @@
                 </div>
                 <div class="stat-item">
                   <span class="stat-number"
-                    >S/. {{ todayStats.income.toLocaleString() }}</span
+                    >Bs. {{ todayStats.income.toLocaleString() }}</span
                   >
                   <span class="stat-label">Ingresos Hoy</span>
                 </div>
@@ -95,7 +95,7 @@
               color="success"
               :show-currency="true"
               :trend="overviewStats.incomeGrowth"
-              :description="`S/. ${overviewStats.monthlyIncome.toLocaleString()} este mes`"
+              :description="`Bs. ${overviewStats.monthlyIncome.toLocaleString()} este mes`"
             />
 
             <DashboardCard
@@ -228,7 +228,7 @@
                     </div>
                   </div>
                   <div class="activity-amount">
-                    S/. {{ affiliation.plan.amount }}
+                    Bs. {{ affiliation.plan.amount }}
                   </div>
                 </div>
               </div>
@@ -257,7 +257,7 @@
                       {{ formatTime(activation.date) }}
                     </div>
                   </div>
-                  <div class="activity-amount">S/. {{ activation.price }}</div>
+                  <div class="activity-amount">Bs. {{ activation.price }}</div>
                 </div>
               </div>
             </div>
@@ -391,7 +391,7 @@ export default {
           title: "Gestionar Usuarios",
           description: "Ver, editar y administrar usuarios del sistema",
           icon: "fas fa-users",
-          route: "/users/all",
+          route: "/userBsall",
           color: "action-primary",
         },
         {
@@ -560,7 +560,7 @@ export default {
       } else if (diffInHours < 24) {
         return `Hace ${diffInHours} hora${diffInHours > 1 ? "s" : ""}`;
       } else {
-        return itemDate.toLocaleDateString("es-PE");
+        return itemDate.toLocaleDateString("es-BO");
       }
     },
   },

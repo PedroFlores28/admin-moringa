@@ -76,7 +76,7 @@
             <td v-for="column in columns" :key="column.key">
               <div class="cell-content">
                 <span v-if="column.type === 'currency'" class="currency">
-                  S/. {{ formatNumber(item[column.key]) }}
+                  Bs. {{ formatNumber(item[column.key]) }}
                 </span>
                 <span v-else-if="column.type === 'number'" class="number">
                   {{ formatNumber(item[column.key]) }}
@@ -147,7 +147,7 @@
               <span class="field-label">{{ column.label }}:</span>
               <span class="field-value">
                 <span v-if="column.type === 'currency'" class="currency">
-                  S/. {{ formatNumber(item[column.key]) }}
+                  Bs. {{ formatNumber(item[column.key]) }}
                 </span>
                 <span v-else-if="column.type === 'number'" class="number">
                   {{ formatNumber(item[column.key]) }}
@@ -397,11 +397,11 @@ export default {
     },
     formatNumber(value) {
       if (value === null || value === undefined) return "0";
-      return new Intl.NumberFormat("es-PE").format(value);
+      return new Intl.NumberFormat("es-BO").format(value);
     },
     formatDate(value) {
       if (!value) return "-";
-      return new Date(value).toLocaleDateString("es-PE");
+      return new Date(value).toLocaleDateString("es-BO");
     },
     getStatusClass(status) {
       const classes = {
@@ -437,7 +437,7 @@ export default {
             .map((col) => {
               let value = item[col.key];
               if (col.type === "currency") {
-                value = `S/. ${this.formatNumber(value)}`;
+                value = `Bs. ${this.formatNumber(value)}`;
               } else if (col.type === "number") {
                 value = this.formatNumber(value);
               } else if (col.type === "date") {

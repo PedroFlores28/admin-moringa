@@ -137,7 +137,7 @@
                 <th>Nivel IA Calidad</th>
                 <th>Directos</th>
                 <th>Directos Afiliados</th>
-                <th>Directos Activos/Mes</th>
+                <th>Directos ActivoBsMes</th>
                 <th>Productividad</th>
                 <th>Activación Personal</th>
                 <th>Score Calidad</th>
@@ -329,7 +329,7 @@
                 <p><strong>Total Directos:</strong> {{ selectedUser.quality_features.total_directos }}</p>
                 <p><strong>Directos Afiliados:</strong> {{ selectedUser.quality_features.directos_afiliados }} 
                   ({{ (selectedUser.quality_features.ratio_productividad * 100).toFixed(0) }}%)</p>
-                <p><strong>Directos Activos/Mes:</strong> {{ selectedUser.quality_features.directos_activos_mensual }}</p>
+                <p><strong>Directos ActivoBsMes:</strong> {{ selectedUser.quality_features.directos_activos_mensual }}</p>
                 <p><strong>Ratio Productividad:</strong> 
                   <span class="tag" :class="{
                     'is-success': selectedUser.quality_features.ratio_productividad >= 0.5,
@@ -346,7 +346,7 @@
             <div class="field">
               <label class="label">👤 Activación Personal</label>
               <div class="content">
-                <p><strong>Activaciones/Mes:</strong> {{ selectedUser.quality_features.activacion_personal }}</p>
+                <p><strong>ActivacioneBsMes:</strong> {{ selectedUser.quality_features.activacion_personal }}</p>
                 <p><strong>Consistencia:</strong> 
                   <span class="tag" :class="{
                     'is-success': selectedUser.quality_features.consistencia_personal >= 0.8,

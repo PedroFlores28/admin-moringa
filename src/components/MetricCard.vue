@@ -6,7 +6,7 @@
 
     <div class="metric-content">
       <div class="metric-value" :style="{ color: valueColor }">
-        <span class="currency" v-if="showCurrency">S/.</span>
+        <span class="currency" v-if="showCurrency">Bs.</span>
         <span class="number">{{ formattedValue }}</span>
         <span class="unit" v-if="unit">{{ unit }}</span>
       </div>
