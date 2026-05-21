@@ -4,9 +4,6 @@
     <nav class="navbar is-spaced modern-navbar">
       <div class="container is-fluid">
         <div class="navbar-brand">
-          <a class="navbar-item logo-container">
-            <img src="@/assets/logo.svg" class="logo" />
-          </a>
           <a
             class="navbar-burger burger"
             :class="{ 'is-active': open }"
@@ -620,29 +617,24 @@ export default {
 </script>
 
 <style scoped>
-/* Modern Navigation Styles */
+/* Modern Navigation Styles — paleta Moringa */
 .modern-navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b5e3a 55%, #1b4332 100%);
+  box-shadow: 0 2px 20px rgba(14, 35, 24, 0.15);
   border-bottom: none;
   min-height: 4.5rem;
 }
 
-.modern-navbar .navbar-brand .logo-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.modern-navbar .navbar-brand {
+  min-width: 0;
 }
 
-.logo {
-  height: 32px;
-  width: auto;
+.modern-navbar .navbar-burger {
+  color: #fff;
 }
 
-.logo-text {
-  font-weight: 600;
-  color: white;
-  font-size: 1.2rem;
+.modern-navbar .navbar-burger:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .modern-navbar .navbar-item,
@@ -788,7 +780,7 @@ export default {
 /* Main Content */
 .main-content {
   min-height: calc(100vh - 140px);
-  background: #f8f9fa;
+  background: #f5f7f4;
   transition: all 0.3s ease;
 }
 
@@ -804,10 +796,10 @@ export default {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b5e3a 100%);
   border: none;
   color: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(14, 35, 24, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -844,14 +836,11 @@ export default {
     font-size: 0.85rem;
   }
 
-  .logo-text {
-    font-size: 1rem;
-  }
 }
 
 @media (max-width: 1023px) {
   .modern-navbar .navbar-menu {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2d6a4f 0%, #1b5e3a 55%, #1b4332 100%);
     border-radius: 0 0 12px 12px;
     max-height: calc(100vh - 4.5rem);
     overflow-y: auto;
@@ -902,10 +891,6 @@ export default {
   .fab-button {
     width: 48px;
     height: 48px;
-  }
-
-  .logo-text {
-    font-size: 0.9rem;
   }
 
   .modern-navbar .navbar-item {
@@ -1089,7 +1074,7 @@ export default {
 }
 
 .menu-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b5e3a 55%, #1b4332 100%);
   color: white;
   padding: 20px;
   display: flex;
