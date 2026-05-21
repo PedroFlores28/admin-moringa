@@ -276,7 +276,7 @@ const router = new Router({
   routes,
 });
 
-const DEFAULT_DOCUMENT_TITLE = "Sifrah Admin";
+const DEFAULT_DOCUMENT_TITLE = "Moringa Admin";
 
 router.beforeEach((to, from, next) => {
   const requiresNoAuth = to.matched.some(
