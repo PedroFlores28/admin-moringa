@@ -423,43 +423,6 @@
                 </label>
               </div>
             </div>
-
-            <!-- Savings Bonus Configuration -->
-            <div class="savings-bonus-config-section" style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #eee;">
-              <h3 class="title is-5" style="color: #e91e63;">
-                <i class="fas fa-piggy-bank"></i> Configuración Bono Ahorro
-              </h3>
-              
-              <div class="field">
-                <label class="checkbox">
-                  <input type="checkbox" v-model="newProduct.is_savings_bonus">
-                  Habilitar para tienda Bono Ahorro
-                </label>
-              </div>
-
-              <div v-if="newProduct.is_savings_bonus" class="form-grid">
-                <div class="field">
-                  <label class="label">Precio Bono Ahorro (Bs)</label>
-                  <div class="control">
-                    <input class="input" type="number" v-model.number="newProduct.savings_price" placeholder="Precio en el bono">
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label class="label">Imagen Exclusiva Bono (Opcional)</label>
-                  <div class="control">
-                    <input class="input" v-model="newProduct.savings_img" placeholder="URL imagen para bono">
-                  </div>
-                </div>
-
-                <div class="field is-full">
-                  <label class="label">Descripción Exclusiva Bono (Opcional)</label>
-                  <div class="control">
-                    <textarea class="textarea" v-model="newProduct.savings_description" placeholder="Descripción especial para el canje"></textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
           </section>
 
           <footer class="modal-card-foot">
@@ -675,43 +638,6 @@
                   <span class="checkmark"></span>
                   <span class="plan-name">{{ plan.name }}</span>
                 </label>
-              </div>
-            </div>
-
-            <!-- Savings Bonus Configuration -->
-            <div class="savings-bonus-config-section" style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #eee;">
-              <h3 class="title is-5" style="color: #e91e63;">
-                <i class="fas fa-piggy-bank"></i> Configuración Bono Ahorro
-              </h3>
-              
-              <div class="field">
-                <label class="checkbox">
-                  <input type="checkbox" v-model="editingProduct.is_savings_bonus">
-                  Habilitar para tienda Bono Ahorro
-                </label>
-              </div>
-
-              <div v-if="editingProduct.is_savings_bonus" class="form-grid">
-                <div class="field">
-                  <label class="label">Precio Bono Ahorro (Bs)</label>
-                  <div class="control">
-                    <input class="input" type="number" v-model.number="editingProduct.savings_price" placeholder="Precio en el bono">
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label class="label">Imagen Exclusiva Bono (Opcional)</label>
-                  <div class="control">
-                    <input class="input" v-model="editingProduct.savings_img" placeholder="URL imagen para bono">
-                  </div>
-                </div>
-
-                <div class="field" style="grid-column: span 2;">
-                  <label class="label">Descripción Exclusiva Bono (Opcional)</label>
-                  <div class="control">
-                    <textarea class="textarea" v-model="editingProduct.savings_description" placeholder="Descripción especial para el canje"></textarea>
-                  </div>
-                </div>
               </div>
             </div>
           </section>
@@ -1359,10 +1285,10 @@ export default {
         id: prod.id || "",
         plans: prod.plans || {},
         prices: prod.prices || {},
-        is_savings_bonus: !!prod.is_savings_bonus,
-        savings_price: prod.savings_price || 0,
-        savings_description: prod.savings_description || "",
-        savings_img: prod.savings_img || "",
+        is_savings_bonus: false,
+        savings_price: 0,
+        savings_description: "",
+        savings_img: "",
         catalog_type: "sifrah",
       };
       this.showEditModal = true;
@@ -1503,10 +1429,10 @@ export default {
             plans: this.newProduct.plans,
             weight: this.newProduct.weight,
             prices: this.newProduct.prices,
-            is_savings_bonus: !!this.newProduct.is_savings_bonus,
-            savings_price: this.newProduct.savings_price,
-            savings_description: this.newProduct.savings_description,
-            savings_img: this.newProduct.savings_img,
+            is_savings_bonus: false,
+            savings_price: 0,
+            savings_description: "",
+            savings_img: "",
             catalog_type: "sifrah",
           },
         });
@@ -1608,10 +1534,10 @@ export default {
           _plans: this.editingProduct.plans,
           _weight: this.editingProduct.weight,
           _prices: this.editingProduct.prices,
-          is_savings_bonus: !!this.editingProduct.is_savings_bonus,
-          savings_price: this.editingProduct.savings_price,
-          savings_description: this.editingProduct.savings_description,
-          savings_img: this.editingProduct.savings_img,
+          is_savings_bonus: false,
+          savings_price: 0,
+          savings_description: "",
+          savings_img: "",
         };
 
         await api.products.POST({
