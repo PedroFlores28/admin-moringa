@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
-import "bulma-switch/dist/csBsbulma-switch.min.css";
+import "bulma-switch/dist/css/bulma-switch.min.css";
 
 Vue.config.productionTip = false;
 
