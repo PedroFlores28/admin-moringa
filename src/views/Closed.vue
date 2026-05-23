@@ -35,7 +35,7 @@
         <div class="summary-card">
           <span class="summary-card__icon">🎁</span>
           <div>
-            <span class="summary-card__label">Total Bono Ahorro Sifrah</span>
+            <span class="summary-card__label">Total Bono Ahorro ClassMoringa</span>
             <strong class="summary-card__value">Bs {{ totalSavingsBonus.toFixed(2) }}</strong>
           </div>
         </div>
@@ -132,7 +132,7 @@
                 <th>Rango Alcanzado</th>
                 <th>Bono Residual</th>
                 <th>Bono Generacional VIP</th>
-                <th>Bono Ahorro Sifrah</th>
+                <th>Bono Ahorro ClassMoringa</th>
                 <th>Bono rango (logro / mant.)</th>
               </tr>
             </thead>
@@ -286,7 +286,7 @@
                   <th>Rango Cerrado</th>
                   <th>Bono Residual</th>
                   <th>Bono Generacional VIP</th>
-                  <th>Bono Ahorro Sifrah</th>
+                  <th>Bono Ahorro ClassMoringa</th>
                   <th>Bono rango (logro / mant.)</th>
                 </tr>
               </thead>

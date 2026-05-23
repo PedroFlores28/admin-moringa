@@ -49,7 +49,7 @@
             <li :class="{ 'is-active': activeTab === 'sifrah' }">
               <a @click="activeTab = 'sifrah'">
                 <span class="icon is-small" style="margin-right: 8px;"><i class="fas fa-leaf"></i></span>
-                <span>Catálogo SIFRAH</span>
+                <span>Catálogo ClassMoringa</span>
               </a>
             </li>
             <li :class="{ 'is-active': activeTab === 'savings' }">
@@ -105,8 +105,8 @@
         <ModernTable
           :data="filteredTableData"
           :columns="activeTab === 'sifrah' ? sifrahColumns : savingsColumns"
-          :title="activeTab === 'sifrah' ? 'Catálogo SIFRAH' : 'Catálogo Bono Ahorro'"
-          :subtitle="activeTab === 'sifrah' ? 'Gestiona productos, puntos y asignación a planes' : 'Gestiona productos de canje, electrodomésticos y premios'"
+          :title="activeTab === 'sifrah' ? 'Catálogo ClassMoringa' : 'Catálogo Bono Ahorro'"
+          :subtitle="activeTab === 'sifrah' ? 'Gestiona productos y asignación a planes' : 'Gestiona productos de canje, electrodomésticos y premios'"
           :actions="tableActions"
           :item-actions="itemActions"
           :show-filters="true"
@@ -124,7 +124,7 @@
               <span class="has-text-weight-bold">{{ value }}</span>
               <div class="tags" style="margin-top: 4px;">
                 <span v-if="row.catalog_type === 'savings' || (row.is_savings_bonus && !row.points)" class="tag is-warning is-light is-small">Externo / Canje</span>
-                <span v-if="row.catalog_type === 'sifrah' || row.points" class="tag is-info is-light is-small">SIFRAH</span>
+                <span v-if="row.catalog_type === 'sifrah' || row.points" class="tag is-info is-light is-small">ClassMoringa</span>
                 <span v-if="row.is_savings_bonus" class="tag is-danger is-light is-small">Bono Ahorro</span>
               </div>
             </div>
@@ -245,13 +245,13 @@
               <div class="field">
                 <label class="label">Tipo de Catálogo</label>
                 <div class="control">
-                  <div class="select is-fullwidth">
-                    <select v-model="newProduct.catalog_type">
-                      <option value="both">Ambos (Sifrah + Bono Ahorro)</option>
-                      <option value="sifrah">Solo SIFRAH</option>
-                      <option value="savings">Solo Bono Ahorro (Canje Externo)</option>
-                    </select>
-                  </div>
+                  <input
+                    class="input"
+                    type="text"
+                    value="ClassMoringa"
+                    readonly
+                    disabled
+                  />
                 </div>
               </div>
 
@@ -360,7 +360,7 @@
                 </div>
               </div>
 
-              <div class="field">
+              <div class="field is-full">
                 <label class="label">Imagen URL</label>
                 <div class="control">
                   <input
@@ -368,6 +368,24 @@
                     v-model="newProduct.img"
                     placeholder="https://ejemplo.com/imagen.jpg"
                   />
+                </div>
+                <div class="product-image-upload">
+                  <label class="button is-info is-light is-small">
+                    <span class="icon"><i class="fas fa-upload"></i></span>
+                    <span>Subir desde dispositivo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      @change="onProductImageUpload($event, 'new')"
+                    />
+                  </label>
+                  <span v-if="uploadingProductImage" class="help is-info">
+                    <i class="fas fa-spinner fa-spin"></i> Subiendo imagen...
+                  </span>
+                </div>
+                <div v-if="newProduct.img" class="product-image-preview">
+                  <img :src="newProduct.img" alt="Vista previa del producto" />
                 </div>
               </div>
 
@@ -486,13 +504,13 @@
               <div class="field">
                 <label class="label">Tipo de Catálogo</label>
                 <div class="control">
-                  <div class="select is-fullwidth">
-                    <select v-model="editingProduct.catalog_type">
-                      <option value="both">Ambos (Sifrah + Bono Ahorro)</option>
-                      <option value="sifrah">Solo SIFRAH</option>
-                      <option value="savings">Solo Bono Ahorro (Canje Externo)</option>
-                    </select>
-                  </div>
+                  <input
+                    class="input"
+                    type="text"
+                    value="ClassMoringa"
+                    readonly
+                    disabled
+                  />
                 </div>
               </div>
 
@@ -593,7 +611,7 @@
                 </div>
               </div>
 
-              <div class="field">
+              <div class="field is-full">
                 <label class="label">Imagen URL</label>
                 <div class="control">
                   <input
@@ -601,6 +619,24 @@
                     v-model="editingProduct.img"
                     placeholder="https://ejemplo.com/imagen.jpg"
                   />
+                </div>
+                <div class="product-image-upload">
+                  <label class="button is-info is-light is-small">
+                    <span class="icon"><i class="fas fa-upload"></i></span>
+                    <span>Subir desde dispositivo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      @change="onProductImageUpload($event, 'edit')"
+                    />
+                  </label>
+                  <span v-if="uploadingProductImage" class="help is-info">
+                    <i class="fas fa-spinner fa-spin"></i> Subiendo imagen...
+                  </span>
+                </div>
+                <div v-if="editingProduct.img" class="product-image-preview">
+                  <img :src="editingProduct.img" alt="Vista previa del producto" />
                 </div>
               </div>
 
@@ -778,6 +814,7 @@ import Layout from "@/views/Layout";
 import DashboardCard from "@/components/DashboardCard";
 import ModernTable from "@/components/ModernTable";
 import api from "@/api";
+import lib from "@/lib";
 import Swal from "sweetalert2";
 
 export default {
@@ -796,6 +833,7 @@ export default {
       showEditModal: false,
       showImageModal: false,
       imageModalUrl: "",
+      uploadingProductImage: false,
       newProduct: {
         code: "",
         name: "",
@@ -813,7 +851,7 @@ export default {
         savings_price: 0,
         savings_description: "",
         savings_img: "",
-        catalog_type: "both",
+        catalog_type: "sifrah",
       },
       editingProduct: {
         code: "",
@@ -832,7 +870,7 @@ export default {
         savings_price: 0,
         savings_description: "",
         savings_img: "",
-        catalog_type: "both",
+        catalog_type: "sifrah",
       },
       validationErrors: {
         type: "",
@@ -1325,11 +1363,51 @@ export default {
         savings_price: prod.savings_price || 0,
         savings_description: prod.savings_description || "",
         savings_img: prod.savings_img || "",
-        catalog_type:
-          prod.catalog_type ||
-          (prod.points ? (prod.is_savings_bonus ? "both" : "sifrah") : "savings"),
+        catalog_type: "sifrah",
       };
       this.showEditModal = true;
+    },
+
+    async onProductImageUpload(event, target) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (!file.type || !file.type.startsWith("image/")) {
+        Swal.fire({
+          icon: "error",
+          title: "Archivo no válido",
+          text: "Solo se permiten imágenes (JPG, PNG, WEBP, etc.)",
+        });
+        event.target.value = "";
+        return;
+      }
+
+      try {
+        this.uploadingProductImage = true;
+        const url = await lib.upload(file, file.name, "products");
+        if (target === "edit") {
+          this.editingProduct.img = url;
+        } else {
+          this.newProduct.img = url;
+        }
+        Swal.fire({
+          icon: "success",
+          title: "Imagen cargada",
+          text: "La URL se guardó en el campo Imagen URL",
+          timer: 1600,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error("Error uploading product image:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error al subir",
+          text: error.message || "No se pudo subir la imagen",
+        });
+      } finally {
+        this.uploadingProductImage = false;
+        event.target.value = "";
+      }
     },
 
     async deleteProduct(product) {
@@ -1429,7 +1507,7 @@ export default {
             savings_price: this.newProduct.savings_price,
             savings_description: this.newProduct.savings_description,
             savings_img: this.newProduct.savings_img,
-            catalog_type: this.newProduct.catalog_type,
+            catalog_type: "sifrah",
           },
         });
         Swal.fire({
@@ -1472,6 +1550,7 @@ export default {
         savings_price: 0,
         savings_description: "",
         savings_img: "",
+        catalog_type: "sifrah",
       };
       this.validationErrors = {}; // Clear validation errors
     },
@@ -1655,6 +1734,10 @@ export default {
   margin-bottom: 24px;
 }
 
+.form-grid .field.is-full {
+  grid-column: 1 / -1;
+}
+
 .field .label {
   font-weight: 600;
   color: #374151;
@@ -1826,6 +1909,30 @@ export default {
 
 .dark-mode .plan-name {
   color: #e2e8f0;
+}
+
+.product-image-upload {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.product-image-preview {
+  margin-top: 12px;
+  text-align: center;
+  padding: 12px;
+  background: #f8faf9;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.product-image-preview img {
+  max-height: 160px;
+  max-width: 100%;
+  border-radius: 8px;
+  object-fit: contain;
 }
 
 .product-thumb {

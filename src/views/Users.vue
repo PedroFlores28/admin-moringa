@@ -68,7 +68,7 @@
 
           <DashboardCard
             :value="totalSifrahBalance"
-            label="Saldo Sifrah"
+            label="Saldo ClassMoringa"
             icon="fas fa-gift"
             color="success"
             :show-currency="true"
@@ -401,7 +401,7 @@
                   <b>Saldo No Disponible:</b> Bs.
                   {{ Number(viewingUser.virtualbalance).toFixed(2) }}
                   <div class="user-cell__balance-row">
-                  <b>Saldo Sifrah:</b> Bs.
+                  <b>Saldo ClassMoringa:</b> Bs.
                   {{ Number(viewingUser.sifrahbalance).toFixed(2) }}
                 </div>
               </div>
@@ -429,7 +429,7 @@
                         <option>DOBLE DIAMANTE</option>
                         <option>TRIPLE DIAMANTE</option>
                         <option>DIAMANTE IMPERIAL</option>
-                        <option>EMBAJADOR SIFRAH</option>
+                        <option value="EMBAJADOR SIFRAH">EMBAJADOR CLASSMORINGA</option>
                       </select>
                     </div>
                   </div>
@@ -663,7 +663,7 @@ export default {
         },
         {
           key: "sifrahbalance",
-          label: "Saldo Sifrah",
+          label: "Saldo ClassMoringa",
           sortable: true,
           type: "currency",
         },

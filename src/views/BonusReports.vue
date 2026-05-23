@@ -4,7 +4,7 @@
       <header class="bonus-header">
         <div class="header-left">
           <h1>📖 Guía de Lógica y Bonificaciones</h1>
-          <p>Consulta las reglas oficiales, porcentajes y requisitos de calificación del sistema Sifrah.</p>
+          <p>Consulta las reglas oficiales, porcentajes y requisitos de calificación del sistema ClassMoringa.</p>
         </div>
       </header>
 
@@ -49,9 +49,9 @@
             </div>
           </div>
 
-          <!-- 2. Bono Ahorro Sifrah -->
+          <!-- 2. Bono Ahorro ClassMoringa -->
           <div class="logic-card">
-            <h3><i class="fas fa-piggy-bank"></i> Bono Ahorro Sifrah</h3>
+            <h3><i class="fas fa-piggy-bank"></i> Bono Ahorro ClassMoringa</h3>
             <p class="logic-desc">Se calcula sobre los puntos excedentes (PR > 160) o puntos totales si hay afiliación en el periodo.</p>
             <table class="mini-table">
               <thead>
@@ -81,7 +81,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(v, rank) in rankBonusTable" :key="rank">
-                    <td><span :class="['rank-tag', rankClass(rank)]">{{ rank }}</span></td>
+                    <td><span :class="['rank-tag', rankClass(rank)]">{{ formatRankLabel(rank) }}</span></td>
                     <td class="amount-val">Bs {{ v.logro }}</td>
                     <td :class="{ 'zero-pct': v.maintenance === 0 }">
                       {{ v.maintenance > 0 ? 'Bs ' + v.maintenance : '-' }}
@@ -114,7 +114,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(pcts, rank) in residualLogic" :key="rank">
-                    <td><span :class="['rank-tag', rankClass(rank)]">{{ rank }}</span></td>
+                    <td><span :class="['rank-tag', rankClass(rank)]">{{ formatRankLabel(rank) }}</span></td>
                     <td v-for="(p, idx) in pcts" :key="idx" :class="{ 'zero-pct': p === 0 }">
                       {{ p > 0 ? (p*100).toFixed(0) + '%' : '-' }}
                     </td>
@@ -141,7 +141,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="r in rankRequirements" :key="r.rank">
-                    <td><strong>{{ r.rank }}</strong></td>
+                    <td><strong>{{ formatRankLabel(r.rank) }}</strong></td>
                     <td>{{ r.threshold }} pts</td>
                     <td>{{ r.frontals }}</td>
                     <td>{{ r.vmp }} pts</td>
@@ -202,6 +202,10 @@ export default {
     }
   },
   methods: {
+    formatRankLabel(rank) {
+      if (rank === 'EMBAJADOR SIFRAH') return 'EMBAJADOR CLASSMORINGA'
+      return rank
+    },
     rankClass(rank) {
       if (!rank) return ''
       return 'rank-' + rank.toLowerCase().replace(/ /g, '-')

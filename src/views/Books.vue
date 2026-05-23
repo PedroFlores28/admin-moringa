@@ -366,7 +366,7 @@ export default {
       savingCategory: false,
       form: {
         title: "",
-        author: "Equipo SIFRAH",
+        author: "Equipo ClassMoringa",
         category: "Educación",
         pages: "100",
         rating: 5,
@@ -511,7 +511,7 @@ export default {
         this.modal.currentBook = null;
         this.form = {
           title: "",
-          author: "Equipo SIFRAH",
+          author: "Equipo ClassMoringa",
           category: this.allCategories.length ? this.allCategories[0] : "Educación",
           pages: "100",
           rating: 5,

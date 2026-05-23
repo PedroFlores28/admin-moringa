@@ -10,7 +10,7 @@
                 ¡Bienvenido, {{ account.name || "Administrador" }}!
               </h1>
               <p class="welcome-subtitle">
-                Panel de control de Sifrah - Gestiona tu negocio desde un solo
+                Panel de control de ClassMoringa - Gestiona tu negocio desde un solo
                 lugar
               </p>
               <div class="welcome-stats">

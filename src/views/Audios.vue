@@ -125,7 +125,7 @@
                 <div class="field">
                   <label class="label">Autor</label>
                   <div class="control">
-                    <input v-model="form.author" class="input" type="text" placeholder="Ej: Equipo SIFRAH" />
+                    <input v-model="form.author" class="input" type="text" placeholder="Ej: Equipo ClassMoringa" />
                   </div>
                 </div>
               </div>
@@ -309,7 +309,7 @@ export default {
       savingCategory: false,
       form: {
         title: "",
-        author: "Equipo SIFRAH",
+        author: "Equipo ClassMoringa",
         category: "Bienvenida",
         duration: "00:00",
         url: "",
@@ -474,7 +474,7 @@ export default {
     resetForm() {
       this.form = {
         title: "",
-        author: "Equipo SIFRAH",
+        author: "Equipo ClassMoringa",
         category: "Bienvenida",
         duration: "00:00",
         url: "",

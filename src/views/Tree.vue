@@ -1586,7 +1586,7 @@ export default {
         "RUBÍ": "RUBÍ",
         ESMERALDA: "ESMERALDA",
         "DIAMANTE IMPERIAL": "DIAMANTE IMPERIAL",
-        "EMBAJADOR SIFRAH": "EMBAJADOR SIFRAH",
+        "EMBAJADOR SIFRAH": "EMBAJADOR CLASSMORINGA",
         "DIAMANTE CORONA": "DIAMANTE CORONA",
       };
       return rankNames[rank] || rank || "Rango desconocido";

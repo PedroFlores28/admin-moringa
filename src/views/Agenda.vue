@@ -169,7 +169,7 @@
                   <div class="field">
                     <label class="label">4. Descripción breve</label>
                     <div class="control">
-                      <textarea class="textarea" rows="3" v-model="form.description" placeholder="Ej: Conoce la oportunidad SIFRAH y cómo iniciar tu negocio." required maxlength="120"></textarea>
+                      <textarea class="textarea" rows="3" v-model="form.description" placeholder="Ej: Conoce la oportunidad ClassMoringa y cómo iniciar tu negocio." required maxlength="120"></textarea>
                     </div>
                     <p class="help has-text-right">{{ form.description.length }}/120</p>
                   </div>
