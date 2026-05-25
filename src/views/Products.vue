@@ -859,12 +859,6 @@ export default {
           label: "Imagen",
           sortable: false,
         },
-        {
-          key: "is_savings_bonus",
-          label: "Bono Ahorro",
-          sortable: true,
-          type: "boolean",
-        },
       ],
       tableActions: [
         {
