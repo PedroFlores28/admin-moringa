@@ -593,6 +593,14 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal de Boleta Digital -->
+    <BoletaModal
+      :show="showBoletaModal"
+      :id="selectedBoletaId"
+      type="affiliation"
+      @close="showBoletaModal = false"
+    />
   </Layout>
 </template>
 
@@ -600,6 +608,7 @@
 import Layout from "@/views/Layout";
 import DashboardCard from "@/components/DashboardCard";
 import ModernTable from "@/components/ModernTable";
+import BoletaModal from "@/components/BoletaModal.vue";
 import api from "@/api";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
@@ -678,6 +687,7 @@ export default {
     Layout,
     DashboardCard,
     ModernTable,
+    BoletaModal,
   },
   data() {
     return {
@@ -697,6 +707,8 @@ export default {
       imageModalUrl: "",
       showViewModal: false,
       selectedAffiliation: null,
+      showBoletaModal: false,
+      selectedBoletaId: null,
       officesList: [], // Lista de oficinas cargadas
       periodsByKey: {}, // { [key]: periodDoc }
       initialTableFilters: { status: "", pay_method: "" },
@@ -1665,7 +1677,11 @@ export default {
       } else if (action === "edit") {
         this.editVoucher(affiliation);
       } else if (action === "invoice") {
-        window.open(`${this.INVOICE_ROOT}?id=${affiliation.id}`, "_blank");
+        console.log("Invoice action clicked. Affiliation raw:", affiliation);
+        console.log("Selected boleta ID:", affiliation ? affiliation.id : 'null');
+        this.selectedBoletaId = affiliation ? affiliation.id : null;
+        this.showBoletaModal = true;
+        console.log("showBoletaModal set to true");
       } else if (action === "cancel") {
         await this.cancelAffiliation(affiliation);
       } else if (action === "revert") {

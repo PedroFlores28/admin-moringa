@@ -70,6 +70,7 @@ class API {
         Collects,
         OfficeCollects,
         Activations,
+        Boleta,
         products,
         kadex,
         closeds,
@@ -109,6 +110,7 @@ class API {
         this.Collects = Collects;
         this.OfficeCollects = OfficeCollects;
         this.Activations = Activations;
+        this.Boleta = Boleta;
         this.products = products;
         this.kadex = kadex;
         this.closeds = closeds;
@@ -207,6 +209,12 @@ class Activations {
     }
     POST({ action, id, points }) {
         return axios.post(`/admin/activations`, { action, id, points });
+    }
+}
+
+class Boleta {
+    get({ id, type }) {
+        return axios.get(`/admin/boleta?id=${id}&type=${type}`);
     }
 }
 
@@ -605,6 +613,7 @@ export default new API({
     Collects: new Collects(),
     OfficeCollects: new OfficeCollects(),
     Activations: new Activations(),
+    Boleta: new Boleta(),
     products: new Products(),
     kadex: new Kadex(),
     closeds: new Closeds(),

@@ -13,6 +13,9 @@ const apiTarget =
 
 module.exports = {
   productionSourceMap: false,
+  transpileDependencies: [
+    'fast-png'
+  ],
   devServer: {
     port: 8081,
     host: "0.0.0.0",

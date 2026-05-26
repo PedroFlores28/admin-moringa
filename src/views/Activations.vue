@@ -555,6 +555,14 @@
         </div>
       </div>
     </section>
+
+    <!-- Modal de Boleta Digital -->
+    <BoletaModal
+      :show="showBoletaModal"
+      :id="selectedBoletaId"
+      type="activation"
+      @close="showBoletaModal = false"
+    />
   </Layout>
 </template>
 
@@ -562,6 +570,7 @@
 import Layout from "@/views/Layout";
 import DashboardCard from "@/components/DashboardCard";
 import ModernTable from "@/components/ModernTable";
+import BoletaModal from "@/components/BoletaModal.vue";
 import api from "@/api";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
@@ -639,6 +648,7 @@ export default {
     Layout,
     DashboardCard,
     ModernTable,
+    BoletaModal,
   },
   data() {
     return {
@@ -658,6 +668,8 @@ export default {
       imageModalUrl: "",
       showViewModal: false,
       selectedActivation: null,
+      showBoletaModal: false,
+      selectedBoletaId: null,
       officesList: [], // Lista de oficinas cargadas
       periodsByKey: {}, // { [key]: periodDoc }
       initialTableFilters: { status: "", pay_method: "" },
@@ -1550,7 +1562,11 @@ export default {
       } else if (action === "edit") {
         this.editVoucher(activation);
       } else if (action === "invoice") {
-        window.open(`${this.INVOICE_ROOT}?id=${activation.id}`, "_blank");
+        console.log("Invoice action clicked. Activation raw:", activation);
+        console.log("Selected boleta ID:", activation ? activation.id : 'null');
+        this.selectedBoletaId = activation ? activation.id : null;
+        this.showBoletaModal = true;
+        console.log("showBoletaModal set to true");
       } else if (action === "delivery") {
         this.selectedActivation = activation;
         this.showViewModal = true;
