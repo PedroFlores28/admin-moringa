@@ -334,18 +334,21 @@
               </div>
 
               <div v-if="newProduct.catalog_type !== 'savings'" class="field">
-                <label class="label">Ganancia por Residual (Bs)</label>
-                <div class="control">
-                  <input
-                    class="input"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    v-model.number="newProduct.residual_profit"
-                    placeholder="Ej: 2, 5, 10"
-                  />
+                <label class="label">Pago residual por niveles (Bs por unidad)</label>
+                <div class="residual-level-grid">
+                  <div v-for="i in 8" :key="i" class="residual-level-item">
+                    <label class="label is-size-7">Nivel {{ i }}</label>
+                    <input
+                      class="input"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      v-model.number="newProduct.residual_profit_levels[i - 1]"
+                      placeholder="0.00"
+                    />
+                  </div>
                 </div>
-                <p class="help">Monto en bolivianos que aporta cada unidad vendida al cálculo de comisiones residuales.</p>
+                <p class="help">Configura cuánto paga este producto según la profundidad del receptor (sin porcentajes y sin compresión).</p>
               </div>
 
               <div class="field">
@@ -547,18 +550,21 @@
               </div>
 
               <div v-if="editingProduct.catalog_type !== 'savings'" class="field">
-                <label class="label">Ganancia por Residual (Bs)</label>
-                <div class="control">
-                  <input
-                    class="input"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    v-model.number="editingProduct.residual_profit"
-                    placeholder="Ej: 2, 5, 10"
-                  />
+                <label class="label">Pago residual por niveles (Bs por unidad)</label>
+                <div class="residual-level-grid">
+                  <div v-for="i in 8" :key="i" class="residual-level-item">
+                    <label class="label is-size-7">Nivel {{ i }}</label>
+                    <input
+                      class="input"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      v-model.number="editingProduct.residual_profit_levels[i - 1]"
+                      placeholder="0.00"
+                    />
+                  </div>
                 </div>
-                <p class="help">Monto en bolivianos que aporta cada unidad vendida al cálculo de comisiones residuales.</p>
+                <p class="help">Configura cuánto paga este producto según la profundidad del receptor (sin porcentajes y sin compresión).</p>
               </div>
 
               <div class="field">
@@ -769,6 +775,7 @@ export default {
         price: 0,
         points: 0,
         residual_profit: 0,
+        residual_profit_levels: Array(8).fill(0),
         weight: 0,
         img: "",
         plans: {},
@@ -788,6 +795,7 @@ export default {
         price: 0,
         points: 0,
         residual_profit: 0,
+        residual_profit_levels: Array(8).fill(0),
         weight: 0,
         img: "",
         plans: {},
@@ -1274,6 +1282,9 @@ export default {
         price: prod.price || 0,
         points: prod.points || 0,
         residual_profit: Number(prod.residual_profit) || 0,
+        residual_profit_levels: Array.isArray(prod.residual_profit_levels)
+          ? prod.residual_profit_levels.slice(0, 8).map((v) => Number(v) || 0)
+          : Array(8).fill(Number(prod.residual_profit) || 0),
         weight: prod.weight || 0,
         img: prod.img || "",
         id: prod.id || "",
@@ -1416,7 +1427,8 @@ export default {
             type: this.newProduct.type,
             price: this.newProduct.price,
             points: this.newProduct.points,
-            residual_profit: Number(this.newProduct.residual_profit) || 0,
+            residual_profit: Number(this.newProduct.residual_profit_levels[0]) || 0,
+            residual_profit_levels: this.newProduct.residual_profit_levels,
             img: this.newProduct.img,
             description: this.newProduct.description,
             subdescription: this.newProduct.subdescription,
@@ -1462,6 +1474,7 @@ export default {
         price: 0,
         points: 0,
         residual_profit: 0,
+        residual_profit_levels: Array(8).fill(0),
         weight: 0,
         img: "",
         plans: {},
@@ -1520,7 +1533,8 @@ export default {
           _type: this.editingProduct.type,
           _price: this.editingProduct.price,
           _points: this.editingProduct.points,
-          residual_profit: Number(this.editingProduct.residual_profit) || 0,
+          residual_profit: Number(this.editingProduct.residual_profit_levels[0]) || 0,
+          residual_profit_levels: this.editingProduct.residual_profit_levels,
           _img: this.editingProduct.img,
           _code: this.editingProduct.code,
           _description: this.editingProduct.description,
@@ -1656,6 +1670,16 @@ export default {
 
 .form-grid .field.is-full {
   grid-column: 1 / -1;
+}
+
+.residual-level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.residual-level-item .label {
+  margin-bottom: 6px;
 }
 
 .field .label {
