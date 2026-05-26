@@ -34,9 +34,6 @@
                 <span>Nuevo Producto</span>
               </button>
 
-              <button class="button is-warning" @click="openSavingsBonusManager">
-                <span>Gestionar Bono Ahorro</span>
-              </button>
             </div>
           </div>
         </div>
@@ -50,12 +47,6 @@
               <a @click="activeTab = 'sifrah'">
                 <span class="icon is-small" style="margin-right: 8px;"><i class="fas fa-leaf"></i></span>
                 <span>Catálogo ClassMoringa</span>
-              </a>
-            </li>
-            <li :class="{ 'is-active': activeTab === 'savings' }">
-              <a @click="activeTab = 'savings'">
-                <span class="icon is-small" style="margin-right: 8px;"><i class="fas fa-piggy-bank"></i></span>
-                <span>Tienda Bono Ahorro</span>
               </a>
             </li>
           </ul>
@@ -104,9 +95,9 @@
       <div class="container">
         <ModernTable
           :data="filteredTableData"
-          :columns="activeTab === 'sifrah' ? sifrahColumns : savingsColumns"
-          :title="activeTab === 'sifrah' ? 'Catálogo ClassMoringa' : 'Catálogo Bono Ahorro'"
-          :subtitle="activeTab === 'sifrah' ? 'Gestiona productos y asignación a planes' : 'Gestiona productos de canje, electrodomésticos y premios'"
+          :columns="sifrahColumns"
+          title="Catálogo ClassMoringa"
+          subtitle="Gestiona productos y asignación a planes"
           :actions="tableActions"
           :item-actions="itemActions"
           :show-filters="true"
@@ -348,7 +339,9 @@
                     />
                   </div>
                 </div>
-                <p class="help">Configura cuánto paga este producto según la profundidad del receptor (sin porcentajes y sin compresión).</p>
+                <p class="help">
+                  Configura cuánto paga este producto en cada profundidad (sin porcentajes y sin compresión).
+                </p>
               </div>
 
               <div class="field">
@@ -564,7 +557,9 @@
                     />
                   </div>
                 </div>
-                <p class="help">Configura cuánto paga este producto según la profundidad del receptor (sin porcentajes y sin compresión).</p>
+                <p class="help">
+                  Configura cuánto paga este producto en cada profundidad (sin porcentajes y sin compresión).
+                </p>
               </div>
 
               <div class="field">
@@ -845,18 +840,6 @@ export default {
           type: "currency",
         },
         {
-          key: "points",
-          label: "Puntos",
-          sortable: true,
-          type: "number",
-        },
-        {
-          key: "residual_profit",
-          label: "Ganancia Residual",
-          sortable: true,
-          type: "currency",
-        },
-        {
           key: "weight",
           label: "Peso",
           sortable: true,
@@ -918,15 +901,6 @@ export default {
             { value: false, label: "Sin asignar" },
           ],
         },
-        {
-          key: "is_savings_bonus",
-          label: "Bono Ahorro",
-          placeholder: "Filtrar Bono Ahorro",
-          options: [
-            { value: true, label: "Habilitados" },
-            { value: false, label: "Deshabilitados" },
-          ],
-        },
       ],
       showSavingsManager: false,
       showAddSavingsModal: false,
@@ -983,25 +957,10 @@ export default {
       }));
     },
     filteredTableData() {
-      let rows = this.tableData;
-      if (this.activeTab === 'savings') {
-        rows = rows.filter(p => p.is_savings_bonus);
-      }
-      return rows.map((row, index) => ({ ...row, rowNum: index + 1 }));
+      return this.tableData.map((row, index) => ({ ...row, rowNum: index + 1 }));
     },
     sifrahColumns() {
       return this.tableColumns;
-    },
-    savingsColumns() {
-      return [
-        { key: "rowNum", label: "#", sortable: true, type: "number" },
-        { key: "img", label: "Imagen", sortable: false },
-        { key: "name", label: "Producto", sortable: true },
-        { key: "type", label: "Categoría", sortable: true },
-        { key: "price", label: "Precio Regular", sortable: true, type: "currency" },
-        { key: "savings_price", label: "Precio Bono", sortable: true, type: "currency" },
-        { key: "is_savings_bonus", label: "Estado", sortable: true, type: "boolean" },
-      ];
     },
   },
   created() {
@@ -1044,11 +1003,7 @@ export default {
           this.load();
           break;
         case "add":
-          if (this.activeTab === 'savings') {
-            this.showAddSavingsModal = true;
-          } else {
-            this.showAddModal = true;
-          }
+          this.showAddModal = true;
           break;
       }
     },
