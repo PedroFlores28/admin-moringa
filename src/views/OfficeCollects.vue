@@ -34,7 +34,7 @@
                 <th>{{ i + 1 }}</th>
                 <td>{{ collect.date | date }}</td>
                 <td>
-                  {{ collect.office.name }}
+                  {{ collect.officeName }}
                 </td>
                 <td>
                   $ {{ collect.amount }}
@@ -102,38 +102,51 @@ export default {
     this.GET(to.params.filter); next()
   },
   created() {
-    const account = JSON.parse(localStorage.getItem('session'))
-
-    this.$store.commit('SET_ACCOUNT', account)
+    const accountRaw =
+      localStorage.getItem("adminAccount") || localStorage.getItem("session");
+    if (accountRaw) {
+      try {
+        const account = JSON.parse(accountRaw);
+        this.$store.commit("SET_ACCOUNT", account);
+      } catch (e) {
+        console.error("Error parsing account session:", e);
+      }
+    }
 
     this.GET(this.$route.params.filter)
   },
   methods: {
     async GET(filter) {
+      this.loading = true;
+      try {
+        const accountId = this.account && this.account.id ? this.account.id : undefined;
+        const { data } = await api.OfficeCollects.GET({ filter, account: accountId });
 
-      this.loading = true
+        if (data.error && data.msg == "invalid filter") {
+          this.$router.push("/office-collectBsall");
+          return;
+        }
 
-      // GET data
-      const { data } = await api.OfficeCollects.GET({ filter, account: this.account.id });
+        const accounts = Array.isArray(this.accounts) ? this.accounts : [];
+        this.collects = (data.collects || [])
+          .map((i) => {
+            const officeName =
+              typeof i.office === "object" && i.office !== null
+                ? i.office.name || "N/A"
+                : (accounts.find((x) => x.id == i.office) || {}).name || "N/A";
 
-      this.loading = false
+            return { ...i, officeName, sending: false, visible: true };
+          })
+          .reverse();
 
-      // error
-      if(data.error && data.msg == 'invalid filter') this.$router.push('collectBsall')
-
-      // success
-      this.collects = data.collects
-                       .map(i => ({ ...i, sending: false, visible: true }))
-                       .reverse()
-
-
-      this.collects.forEach((collect) => {
-        const office = this.accounts.find(x => x.id == collect.office)
-        collect.office = office.name
-      })
-
-      if(filter == 'all')     this.title = 'Todos las Retiros'
-      if(filter == 'pending') this.title = 'Retiros Pendientes'
+        if (filter == "all") this.title = "Todos los Retiros";
+        if (filter == "pending") this.title = "Retiros Pendientes";
+      } catch (e) {
+        console.error("Error loading office collects:", e);
+        this.collects = [];
+      } finally {
+        this.loading = false;
+      }
 
     },
     async approve(collect) {

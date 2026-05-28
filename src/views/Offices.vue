@@ -631,41 +631,44 @@ export default {
   },
 
   async created() {
-    const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
-
-    this.$store.commit("SET_ACCOUNT", account);
+    try {
+      const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
+      this.$store.commit("SET_ACCOUNT", account);
+    } catch (e) {
+      console.error("Error parsing admin account:", e);
+    }
 
     this.loading = true;
 
-    // // GET data
-    const { data } = await api.offices.GET();
+    try {
+      const { data } = await api.offices.GET();
 
-    this.loading = false;
+      const rawOffices = Array.isArray(data && data.offices) ? data.offices : [];
+      const normalizedOffices = rawOffices.map((office) => {
+        const products = Array.isArray(office.products) ? office.products : [];
+        const recharges = Array.isArray(office.recharges) ? office.recharges : [];
 
-    // error
-    // if(data.error && data.msg == 'invalid filter') this.$router.push('collectBsall')
-
-    data.offices = data.offices.map((office) => {
-      office.new_products = [];
-
-      office.products.forEach((p) => {
-        office.new_products.push({
-          id: p.id,
-          name: p.name,
-          total: 0,
-        });
+        return {
+          ...office,
+          products,
+          recharges: recharges.map((r) => ({ ...r, show: false })),
+          new_products: products.map((p) => ({
+            id: p.id,
+            name: p.name,
+            total: 0,
+          })),
+        };
       });
 
-      office.recharges.forEach((r) => {
-        r.show = false;
-      });
-
-      return office;
-    });
-
-    this.offices = data.offices;
-
-    this.selected_office = this.offices[0];
+      this.offices = normalizedOffices;
+      this.selected_office = this.offices[0] || null;
+    } catch (error) {
+      console.error("Error loading offices:", error);
+      this.offices = [];
+      this.selected_office = null;
+    } finally {
+      this.loading = false;
+    }
   },
 
   methods: {
