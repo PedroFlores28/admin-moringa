@@ -213,13 +213,13 @@
               </div>
 
               <div class="field">
-                <label class="label">Ciudad</label>
+                <label class="label">Departamento</label>
                 <div class="control">
                   <input
                     class="input"
                     type="text"
                     v-model="editingUser.city"
-                    placeholder="Ciudad del usuario"
+                    placeholder="Departamento del usuario"
                   />
                 </div>
               </div>
@@ -368,7 +368,7 @@
               >
                 <div class="field"><b>DNI:</b> {{ viewingUser.dni }}</div>
                 <div class="field"><b>Puntos:</b> {{ viewingUser.points }}</div>
-                <div class="field"><b>Ciudad:</b> {{ viewingUser.city }}</div>
+                <div class="field"><b>Departamento:</b> {{ viewingUser.city }}</div>
                 <div class="field"><b>País:</b> {{ viewingUser.country }}</div>
                 <div class="field"><b>Email:</b> {{ viewingUser.email }}</div>
                 <div class="field">
@@ -644,8 +644,8 @@ export default {
           type: "status",
         },
         {
-          key: "points",
-          label: "Puntos",
+          key: "totalBoughtProducts",
+          label: "Productos",
           sortable: true,
           type: "number",
         },
@@ -662,34 +662,18 @@ export default {
           type: "currency",
         },
         {
-          key: "sifrahbalance",
-          label: "Saldo ClassMoringa",
-          sortable: true,
-          type: "currency",
-        },
-        {
           key: "parent",
           label: "Patrocinador",
           sortable: true,
         },
         {
-          key: "country",
-          label: "País",
-          sortable: true,
-        },
-        {
           key: "city",
-          label: "Ciudad",
+          label: "Departamento",
           sortable: true,
         },
         {
           key: "planLabel",
           label: "Plan",
-          sortable: false,
-        },
-        {
-          key: "affiliation_points",
-          label: "Puntos Afiliación",
           sortable: false,
         },
       ],
@@ -1206,7 +1190,7 @@ export default {
             Teléfono: user.phone,
             FechaNacimiento: user.birthdate,
             FechaRegistro: user.date,
-            Ciudad: user.city,
+            Departamento: user.city,
           }))
         );
 
