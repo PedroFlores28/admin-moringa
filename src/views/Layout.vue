@@ -75,22 +75,6 @@
                 <span>Transacciones</span>
               </a>
 
-              <!-- Agenda -->
-              <a class="navbar-item" href="/agenda">
-                <span class="icon">
-                  <i class="fas fa-calendar-check"></i>
-                </span>
-                <span>Agenda</span>
-              </a>
-
-              <!-- Leadership Predictions -->
-              <a class="navbar-item" href="/leadership-predictions">
-                <span class="icon">
-                  <i class="fas fa-crown"></i>
-                </span>
-                <span>Predicciones</span>
-              </a>
-
               <!-- AI Predictions -->
 <!--               <a class="navbar-item" href="/ai-predictions">
                 <span class="icon">
@@ -133,18 +117,6 @@
                 <span>Inventario</span>
               </a>
 
-              <!-- Delivery Management -->
-              <a 
-                class="navbar-item" 
-                href="/delivery-management"
-                v-if="accountType === 'admin'"
-              >
-                <span class="icon">
-                  <i class="fas fa-truck"></i>
-                </span>
-                <span>Delivery</span>
-              </a>
-
               <!-- Banner -->
               <a
                 class="navbar-item"
@@ -157,20 +129,17 @@
                 <span>Banner</span>
               </a>
 
-              <!-- Herramientas Menu (incluye Audio y Libros en el desplegable) -->
-              <div
-                class="navbar-item menu-trigger"
-                @click="toggleMenu('tools')"
+              <!-- Materiales (acceso directo sin submenú) -->
+              <a
+                class="navbar-item"
+                href="/materials"
                 v-if="accountType === 'admin'"
               >
                 <span class="icon">
                   <i class="fas fa-tools"></i>
                 </span>
-                <span>Herramientas</span>
-                <span class="icon is-small">
-                  <i class="fas fa-chevron-down"></i>
-                </span>
-              </div>
+                <span>Materiales</span>
+              </a>
 
               <!-- Network -->
               <a
@@ -512,32 +481,6 @@
           </a>
         </div>
 
-        <div v-if="activeMenu === 'tools'" class="menu-items">
-          <a class="menu-item" href="/flyers" @click="closeMenu">
-            <span class="icon">
-              <i class="fas fa-file-image"></i>
-            </span>
-            <span>Flyers</span>
-          </a>
-          <a class="menu-item" href="/materials" @click="closeMenu">
-            <span class="icon">
-              <i class="fas fa-layer-group"></i>
-            </span>
-            <span>Materiales</span>
-          </a>
-          <a class="menu-item" href="/audios" @click="closeMenu">
-            <span class="icon">
-              <i class="fas fa-microphone"></i>
-            </span>
-            <span>Audio</span>
-          </a>
-          <a class="menu-item" href="/books" @click="closeMenu">
-            <span class="icon">
-              <i class="fas fa-book"></i>
-            </span>
-            <span>Libros</span>
-          </a>
-        </div>
       </div>
     </div>
   </div>
@@ -606,8 +549,6 @@ export default {
           return "Oficinas";
         case "operations":
           return "Compras";
-        case "tools":
-          return "Herramientas";
         default:
           return "Menú";
       }
