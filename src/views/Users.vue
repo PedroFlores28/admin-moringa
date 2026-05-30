@@ -397,11 +397,7 @@
                 <div class="field">
                   <b>Saldo No Disponible:</b> Bs.
                   {{ Number(viewingUser.virtualbalance).toFixed(2) }}
-                  <div class="user-cell__balance-row">
-                  <b>Saldo ClassMoringa:</b> Bs.
-                  {{ Number(viewingUser.sifrahbalance).toFixed(2) }}
                 </div>
-              </div>
                 <div class="field">
                   <b>Plan:</b> {{ getPlanLabel(viewingUser.plan, viewingUser) }}
                 </div>
@@ -605,7 +601,6 @@ export default {
       totalPages: 0,
       totalBalance: 0,
       totalVirtualBalance: 0,
-      totalSifrahBalance: 0,
       affiliatedTotal: 0,
       selectedStatus: null,
       selectedBalance: null,
@@ -813,12 +808,6 @@ export default {
             : "Bs. 0.00",
         virtualbalanceRaw:
           user.virtualbalance != null ? Number(user.virtualbalance) : 0,
-        sifrahbalance:
-          user.sifrahbalance != null
-            ? `Bs. ${Number(user.sifrahbalance).toFixed(2)}`
-            : "Bs. 0.00",
-        sifrahbalanceRaw:
-          user.sifrahbalance != null ? Number(user.sifrahbalance) : 0,
         rankLabel: this.getEffectiveRankLabel(user),
         department: user.department || user.city || "—",
         totalBoughtProducts:
@@ -880,7 +869,6 @@ export default {
         let totalPages = 0;
         let totalBalance = 0;
         let totalVirtualBalance = 0;
-        let totalSifrahBalance = 0;
         let showAvailable = undefined;
         let showVirtualBalance = undefined;
         if (this.selectedBalance === "available") showAvailable = true;
@@ -921,7 +909,6 @@ export default {
           users = users.slice(skip, skip + this.itemsPerPage);
           totalBalance = data.totalBalance || 0;
           totalVirtualBalance = data.totalVirtualBalance || 0;
-          totalSifrahBalance = data.totalSifrahBalance || 0;
         } else {
           const { data } = await api.users.GET({
             filter: backendFilter,
@@ -944,14 +931,12 @@ export default {
           totalPages = data.totalPages || 0;
           totalBalance = data.totalBalance || 0;
           totalVirtualBalance = data.totalVirtualBalance || 0;
-          totalSifrahBalance = data.totalSifrahBalance || 0;
         }
         this.users = users;
         this.totalItems = totalItems;
         this.totalPages = totalPages;
         this.totalBalance = totalBalance;
         this.totalVirtualBalance = totalVirtualBalance;
-        this.totalSifrahBalance = totalSifrahBalance;
         if (filter == "all") this.title = "Todos los usuarios";
         if (filter == "affiliated") this.title = "Usuarios Afiliados";
         if (filter == "activated") this.title = "Usuarios Activados";
@@ -963,7 +948,6 @@ export default {
         this.totalPages = 0;
         this.totalBalance = 0;
         this.totalVirtualBalance = 0;
-        this.totalSifrahBalance = 0;
         Swal.fire({
           icon: "error",
           title: "Error",
