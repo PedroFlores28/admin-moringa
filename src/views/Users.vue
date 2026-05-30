@@ -3,7 +3,7 @@
     <section class="users-section">
       <!-- Page Header -->
       <div class="page-header">
-        <div class="container">
+        <div class="container is-fluid">
           <div class="header-content">
             <div class="header-left">
               <h1 class="page-title">{{ title }}</h1>
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Stats Cards -->
-      <div class="container">
+      <div class="container is-fluid">
         <div class="stats-grid">
           <DashboardCard
             :value="totalBalance"
@@ -94,7 +94,7 @@
       </div>
 
       <!-- Modern Table -->
-      <div class="container">
+      <div class="container is-fluid">
         <ModernTable
           :data="tableData"
           :columns="tableColumns"
@@ -1557,7 +1557,15 @@ export default {
 
 <style scoped>
 .users-section {
-  padding: 0;
+  padding: 0 0 32px;
+  width: 100%;
+}
+
+.users-section > .container.is-fluid {
+  max-width: none;
+  width: 100%;
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 /* Page Header */
