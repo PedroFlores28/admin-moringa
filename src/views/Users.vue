@@ -595,7 +595,6 @@ export default {
   data() {
     return {
       users: [],
-      allUsers: [],
       loading: true,
       title: null,
       search: null,
@@ -784,9 +783,6 @@ export default {
     sortedUsers() {
       return this.users.sort((a, b) => new Date(b.date) - new Date(a.date));
     },
-    affiliatedUsers() {
-      return this.allUsers.filter((user) => user.affiliated);
-    },
     tableData() {
       return this.sortedUsers.map((user, index) => ({
         ...user,
@@ -852,8 +848,11 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.selectedStatus = null;
     this.selectedBalance = null;
-    this.GET(to.params.filter);
+    this.currentPage = 1;
     next();
+    this.$nextTick(() => {
+      this.GET(to.params.filter);
+    });
   },
   async created() {
     const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
@@ -863,10 +862,18 @@ export default {
     this.debouncedInput = debounce(this.input, 1500);
   },
   methods: {
-    async GET() {
+    resolveListFilter(routeFilter) {
+      const fromRoute =
+        routeFilter != null && routeFilter !== ""
+          ? routeFilter
+          : this.$route.params.filter;
+      return this.selectedStatus || fromRoute || "all";
+    },
+
+    async GET(routeFilter) {
       this.loading = true;
       try {
-        let filter = this.selectedStatus || this.$route.params.filter || "all";
+        let filter = this.resolveListFilter(routeFilter);
         let backendFilter = filter;
         let users = [];
         let totalItems = 0;
@@ -939,16 +946,6 @@ export default {
           totalVirtualBalance = data.totalVirtualBalance || 0;
           totalSifrahBalance = data.totalSifrahBalance || 0;
         }
-        // Obtener todos los usuarios para los totales (limit alto)
-        const { data: allData } = await api.users.GET({
-          filter: "all",
-          page: 1,
-          limit: 10000,
-        });
-        if (allData && allData.error) {
-          throw new Error(allData.msg || "Error al cargar listado completo");
-        }
-        this.allUsers = allData.users || [];
         this.users = users;
         this.totalItems = totalItems;
         this.totalPages = totalPages;
@@ -961,6 +958,12 @@ export default {
         if (filter == "registered") this.title = "Usuarios Registrados";
       } catch (error) {
         console.error("Error loading users:", error);
+        this.users = [];
+        this.totalItems = 0;
+        this.totalPages = 0;
+        this.totalBalance = 0;
+        this.totalVirtualBalance = 0;
+        this.totalSifrahBalance = 0;
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -1180,18 +1183,46 @@ export default {
 
     async exportToExcel() {
       try {
+        const filter = this.resolveListFilter();
+        const backendFilter = filter === "registered" ? "all" : filter;
+        let showAvailable = undefined;
+        let showVirtualBalance = undefined;
+        if (this.selectedBalance === "available") showAvailable = true;
+        if (this.selectedBalance === "not_available") showAvailable = false;
+        if (this.selectedBalance === "virtual") showVirtualBalance = true;
+
         const { data } = await api.users.GET({
-          filter: this.$route.params.filter,
+          filter: backendFilter,
           page: 1,
-          limit: 1000,
+          limit: 10000,
           search: this.search || undefined,
-          totalBalance: this.totalBalance,
-          totalVirtualBalance: this.totalVirtualBalance,
-          showAvailable: this.check,
+          showAvailable,
+          showVirtualBalance,
         });
+        if (data && data.error) {
+          throw new Error(data.msg || "Error al exportar usuarios");
+        }
+
+        let exportUsers = data.users || [];
+        if (filter === "registered") {
+          exportUsers = exportUsers.filter(
+            (user) =>
+              (!user.affiliated ||
+                user.affiliated === "false" ||
+                user.affiliated === 0) &&
+              (!user.activated ||
+                user.activated === "false" ||
+                user.activated === 0)
+          );
+        }
+        if (this.selectedBalance === "not_available") {
+          exportUsers = exportUsers.filter(
+            (user) => Number(user.balance) === 0
+          );
+        }
 
         const worksheet = XLSX.utils.json_to_sheet(
-          data.users.map((user) => ({
+          exportUsers.map((user) => ({
             Nombre: user.name,
             Apellido: user.lastName,
             DNI: user.dni,
