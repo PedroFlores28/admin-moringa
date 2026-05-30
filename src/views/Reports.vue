@@ -273,6 +273,7 @@ import IncomeChart from "@/components/IncomeChart";
 import AdvancedFilters from "@/components/AdvancedFilters";
 import InteractiveTable from "@/components/InteractiveTable";
 import api from "@/api";
+import { resolvePlanDisplayName } from "@/utils/planNames";
 
 export default {
   components: {
@@ -458,7 +459,10 @@ export default {
           (affiliation.user &&
             (affiliation.user.name || affiliation.user.email)) ||
           "-",
-        plan: (affiliation.plan && affiliation.plan.name) || "-",
+        plan:
+          (affiliation.plan &&
+            resolvePlanDisplayName(affiliation.plan)) ||
+          "-",
         amount:
           affiliation.plan &&
           affiliation.plan.amount !== null &&

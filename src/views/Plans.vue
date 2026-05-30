@@ -6,9 +6,11 @@
         <div class="container">
           <div class="header-content">
             <div class="header-left">
-              <h1 class="page-title">Planes</h1>
+              <h1 class="page-title">Ver Planes</h1>
               <p class="page-subtitle">
-                Gestiona los planes de afiliación del sistema
+                Catálogo maestro de afiliación. Los cambios aquí (nombre, monto,
+                productos máximos, imagen) se aplican en la app de socios,
+                afiliaciones, historial y comprobantes.
               </p>
             </div>
 
@@ -35,11 +37,11 @@
       <div class="container">
         <div class="stats-grid">
           <DashboardCard
-            :value="plans.length"
-            label="Total Planes"
+            :value="activeAffiliationPlansCount"
+            label="Planes activos"
             icon="fas fa-list"
             color="primary"
-            :description="`Configurados en el sistema`"
+            :description="`${plans.length} en catálogo total`"
           />
 
           <DashboardCard
@@ -88,6 +90,14 @@
           @search="handleSearch"
           @filter="handleFilter"
         >
+          <template #cell-affiliation_active="{ value }">
+            <span
+              class="tag"
+              :class="value ? 'is-success is-light' : 'is-warning is-light'"
+            >
+              {{ value ? "Sí" : "No" }}
+            </span>
+          </template>
           <template #cell-img="{ value }">
             <span v-if="value">
               <img
@@ -122,14 +132,18 @@
           <section class="modal-card-body">
             <div class="form-grid">
               <div class="field">
-                <label class="label">ID</label>
+                <label class="label">ID (no se puede cambiar después)</label>
                 <div class="control">
                   <input
                     class="input"
                     v-model="newPlan.id"
-                    placeholder="ID del plan"
+                    placeholder="ej: class, master"
                   />
                 </div>
+                <p class="help">
+                  Identificador interno. Recomendado: <strong>class</strong> y
+                  <strong>master</strong> para VIP.
+                </p>
               </div>
 
               <div class="field">
@@ -213,6 +227,16 @@
                   />
                 </div>
               </div>
+
+              <div class="field">
+                <label class="checkbox">
+                  <input
+                    type="checkbox"
+                    v-model="newPlan.affiliation_active"
+                  />
+                  Visible en flujo de afiliación (app socios)
+                </label>
+              </div>
             </div>
           </section>
 
@@ -247,7 +271,8 @@
                   <input
                     class="input"
                     v-model="editingPlan.id"
-                    placeholder="ID del plan"
+                    readonly
+                    disabled
                   />
                 </div>
               </div>
@@ -334,6 +359,16 @@
                   />
                 </div>
               </div>
+
+              <div class="field">
+                <label class="checkbox">
+                  <input
+                    type="checkbox"
+                    v-model="editingPlan.affiliation_active"
+                  />
+                  Visible en flujo de afiliación (app socios)
+                </label>
+              </div>
             </div>
           </section>
           <footer class="modal-card-foot">
@@ -400,6 +435,7 @@ export default {
         max_products: 0,
         kit: 0,
         img: "",
+        affiliation_active: true,
       },
       editingPlan: {
         id: "",
@@ -410,6 +446,7 @@ export default {
         max_products: 0,
         kit: 0,
         img: "",
+        affiliation_active: true,
       },
 
       // Table configuration
@@ -447,6 +484,11 @@ export default {
           label: "N",
           sortable: true,
           type: "number",
+        },
+        {
+          key: "affiliation_active",
+          label: "En afiliación",
+          sortable: true,
         },
         {
           key: "max_products",
@@ -523,11 +565,15 @@ export default {
               : "0.00",
           affiliation_points: plan.affiliation_points || 0,
           n: plan.n || 0,
+          affiliation_active: plan.affiliation_active !== false,
           max_products: plan.max_products || 0,
           kit: plan.kit || 0,
           img: plan.img || "",
           raw: plan,
         }));
+    },
+    activeAffiliationPlansCount() {
+      return this.plans.filter((p) => p && p.affiliation_active !== false).length;
     },
     totalAmount() {
       return this.plans.reduce(
@@ -586,7 +632,10 @@ export default {
     async handleItemAction({ action, item }) {
       const plan = item.raw ? item.raw : item;
       if (action === "edit") {
-        this.editingPlan = { ...plan };
+        this.editingPlan = {
+          ...plan,
+          affiliation_active: plan.affiliation_active !== false,
+        };
         this.showEditModal = true;
       } else if (action === "delete") {
         await this.deletePlan(plan);
@@ -602,6 +651,14 @@ export default {
     },
 
     async addPlan() {
+      if (!this.newPlan.id || !this.newPlan.name) {
+        Swal.fire({
+          icon: "warning",
+          title: "Datos incompletos",
+          text: "ID y nombre son obligatorios",
+        });
+        return;
+      }
       try {
         await api.Plans.POST({
           action: "add",
@@ -643,6 +700,7 @@ export default {
             _n: this.editingPlan.n,
             _max_products: this.editingPlan.max_products,
             _kit: this.editingPlan.kit,
+            _affiliation_active: this.editingPlan.affiliation_active,
           },
         });
 
@@ -712,6 +770,7 @@ export default {
         max_products: 0,
         kit: 0,
         img: "",
+        affiliation_active: true,
       };
     },
 

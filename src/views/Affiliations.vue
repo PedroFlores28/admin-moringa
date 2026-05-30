@@ -398,7 +398,9 @@
                   ><i class="fas fa-cube"></i> Plan:</span
                 >
                 <span class="detail-value">{{
-                  selectedAffiliation.plan && selectedAffiliation.plan.name
+                  selectedAffiliation.plan
+                    ? resolvePlanDisplayName(selectedAffiliation.plan)
+                    : ""
                 }}</span>
               </div>
               <div class="detail-item">
@@ -542,8 +544,9 @@
                     ><i class="fas fa-arrow-up"></i> Plan anterior:</span
                   >
                   <span class="detail-value">{{
-                    selectedAffiliation.previousPlan &&
-                    selectedAffiliation.previousPlan.name
+                    selectedAffiliation.previousPlan
+                      ? resolvePlanDisplayName(selectedAffiliation.previousPlan)
+                      : ""
                   }}</span>
                 </div>
                 <div class="detail-item">
@@ -612,6 +615,7 @@ import BoletaModal from "@/components/BoletaModal.vue";
 import api from "@/api";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
+import { resolvePlanDisplayName } from "@/utils/planNames";
 
 const INVOICE_ROOT = process.env.VUE_APP_INVOICE_ROOT;
 
@@ -1138,7 +1142,7 @@ export default {
           },
           office: officeName,
           plan: {
-            name: (affiliation.plan && affiliation.plan.name) || "",
+            name: resolvePlanDisplayName(affiliation.plan || {}),
             amount: (affiliation.plan && affiliation.plan.amount) || 0,
           },
           total:
@@ -1232,6 +1236,7 @@ export default {
     await this.GET("all");
   },
   methods: {
+    resolvePlanDisplayName,
     isDeliveryEnabled(row) {
       // Entrega solo se habilita cuando el comprobante está aprobado (en proceso/finalizado).
       // Si está pendiente/rechazado/anulado, se muestra deshabilitado.
@@ -1935,7 +1940,9 @@ export default {
           const telefono = affiliation.phone || "-";
 
           // Formatear plan
-          const plan = affiliation.plan && affiliation.plan.name ? affiliation.plan.name : "-";
+          const plan = affiliation.plan
+            ? resolvePlanDisplayName(affiliation.plan)
+            : "-";
 
           // Formatear total
           let total = "-";

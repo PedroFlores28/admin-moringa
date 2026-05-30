@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                   <td><strong>Paquetes</strong></td>
-                  <td>CLASS (Bs. 480) y EMPRESARIO (Bs. 500)</td>
+                  <td>CLASS (Bs. 480) y VIP (Bs. 500)</td>
                 </tr>
                 <tr>
                   <td><strong>Patrocinador activo</strong></td>
@@ -58,9 +58,8 @@
                 <tr><th>Plan del Socio</th><th>Porcentaje de Ahorro</th></tr>
               </thead>
               <tbody>
-                <tr><td>Empresario (Master)</td><td class="amount-val">40%</td></tr>
-                <tr><td>Distribuidor (Standard)</td><td class="amount-val">30%</td></tr>
-                <tr><td>Ejecutivo (Basic)</td><td class="amount-val">21%</td></tr>
+                <tr><td>VIP</td><td class="amount-val">40%</td></tr>
+                <tr><td>CLASS</td><td class="amount-val">21%</td></tr>
               </tbody>
             </table>
           </div>

@@ -67,15 +67,6 @@
           />
 
           <DashboardCard
-            :value="totalSifrahBalance"
-            label="Saldo ClassMoringa"
-            icon="fas fa-gift"
-            color="success"
-            :show-currency="true"
-            :description="`Saldo de Bono Ahorro`"
-          />
-
-          <DashboardCard
             :value="totalItems"
             label="Total Usuarios"
             icon="fas fa-users"
@@ -99,7 +90,7 @@
           :data="tableData"
           :columns="tableColumns"
           title="Lista de Usuarios"
-          subtitle="Gestiona y edita información de usuarios"
+          subtitle="Productos = unidades compradas en el mes calendario y periodo abierto"
           :actions="tableActions"
           :item-actions="itemActions"
           :show-filters="true"
@@ -117,7 +108,11 @@
           @filter="handleFilter"
           @page-change="handlePageChange"
           @page-size-change="handlePageSizeChange"
-        />
+        >
+          <template #cell-totalBoughtProducts="{ value }">
+            <strong>{{ value != null ? Number(value) : 0 }}</strong>
+          </template>
+        </ModernTable>
       </div>
 
       <!-- Edit User Modal -->
@@ -218,7 +213,7 @@
                   <input
                     class="input"
                     type="text"
-                    v-model="editingUser.city"
+                    v-model="editingUser.department"
                     placeholder="Departamento del usuario"
                   />
                 </div>
@@ -241,9 +236,9 @@
                 <div class="control">
                   <div class="select is-fullwidth">
                     <select v-model="editingUser.plan">
-                      <option value="basic">EJECUTIVO</option>
-                      <option value="standard">DISTRIBUIDOR</option>
-                      <option value="master">EMPRESARIO</option>
+                      <option value="none">Sin plan</option>
+                      <option value="class">CLASS</option>
+                      <option value="master">VIP</option>
                     </select>
                   </div>
                 </div>
@@ -368,8 +363,10 @@
               >
                 <div class="field"><b>DNI:</b> {{ viewingUser.dni }}</div>
                 <div class="field"><b>Puntos:</b> {{ viewingUser.points }}</div>
-                <div class="field"><b>Departamento:</b> {{ viewingUser.city }}</div>
-                <div class="field"><b>País:</b> {{ viewingUser.country }}</div>
+                <div class="field">
+                  <b>Departamento:</b>
+                  {{ viewingUser.department || viewingUser.city || "—" }}
+                </div>
                 <div class="field"><b>Email:</b> {{ viewingUser.email }}</div>
                 <div class="field">
                   <b>Teléfono:</b> {{ viewingUser.phone }}
@@ -406,7 +403,7 @@
                 </div>
               </div>
                 <div class="field">
-                  <b>Plan:</b> {{ getPlanLabel(viewingUser.plan) }}
+                  <b>Plan:</b> {{ getPlanLabel(viewingUser.plan, viewingUser) }}
                 </div>
               </div>
             </div>
@@ -587,6 +584,7 @@ import ModernTable from "@/components/ModernTable";
 import api from "@/api";
 import { debounce } from "lodash";
 import Swal from "sweetalert2";
+import { resolvePlanDisplayName } from "@/utils/planNames";
 
 export default {
   components: {
@@ -667,7 +665,7 @@ export default {
           sortable: true,
         },
         {
-          key: "city",
+          key: "department",
           label: "Departamento",
           sortable: true,
         },
@@ -768,7 +766,7 @@ export default {
         password: "",
         rank: "user",
         points: 0,
-        city: "",
+        department: "",
         parentDni: "",
         plan: "",
         affiliation_points: 0,
@@ -826,9 +824,12 @@ export default {
         sifrahbalanceRaw:
           user.sifrahbalance != null ? Number(user.sifrahbalance) : 0,
         rankLabel: this.getEffectiveRankLabel(user),
+        department: user.department || user.city || "—",
+        totalBoughtProducts:
+          user.totalBoughtProducts != null ? Number(user.totalBoughtProducts) : 0,
         plan: user.plan || "",
-        planLabel: this.getPlanLabel(user.plan),
-        affiliation_pointsplan: user.affiliation_pointsplan || 0,
+        planLabel:
+          user.planLabel || this.getPlanLabel(user.plan, user),
         raw: user,
       }));
     },
@@ -889,6 +890,9 @@ export default {
             showAvailable,
             showVirtualBalance,
           });
+          if (data && data.error) {
+            throw new Error(data.msg || "Error al cargar usuarios");
+          }
           users = (data.users || []).filter(
             (user) =>
               (!user.affiliated ||
@@ -920,6 +924,9 @@ export default {
             showAvailable,
             showVirtualBalance,
           });
+          if (data && data.error) {
+            throw new Error(data.msg || "Error al cargar usuarios");
+          }
           users = data.users || [];
           // Filtro de saldo no disponible (saldo = 0)
           if (this.selectedBalance === "not_available") {
@@ -934,9 +941,13 @@ export default {
         }
         // Obtener todos los usuarios para los totales (limit alto)
         const { data: allData } = await api.users.GET({
+          filter: "all",
           page: 1,
           limit: 10000,
         });
+        if (allData && allData.error) {
+          throw new Error(allData.msg || "Error al cargar listado completo");
+        }
         this.allUsers = allData.users || [];
         this.users = users;
         this.totalItems = totalItems;
@@ -1048,9 +1059,10 @@ export default {
         password: "", // Siempre vacío para nueva contraseña
         rank: user.rank || "user",
         points: user.points || 0,
-        city: user.city || "",
+        department: user.department || user.city || "",
         parentDni: user.parent && user.parent.dni ? user.parent.dni : "",
-        plan: user.plan || "",
+        plan:
+          !user.plan || user.plan === "default" ? "none" : user.plan,
         affiliation_points: user.affiliation_points || 0,
       };
     },
@@ -1183,14 +1195,14 @@ export default {
             Nombre: user.name,
             Apellido: user.lastName,
             DNI: user.dni,
-            Puntos: user.points,
-            Saldo: user.balance,
-            País: user.country,
             Email: user.email,
             Teléfono: user.phone,
-            FechaNacimiento: user.birthdate,
+            Departamento: user.department || user.city || "",
+            Plan: user.planLabel || this.getPlanLabel(user.plan, user),
+            ProductosMes:
+              user.totalBoughtProducts != null ? user.totalBoughtProducts : 0,
+            Saldo: user.balance,
             FechaRegistro: user.date,
-            Departamento: user.city,
           }))
         );
 
@@ -1351,9 +1363,13 @@ export default {
           _password: this.editingUser.password || "",
           _points: this.editingUser.points || 0,
           _rank: this.editingUser.rank || "user",
-          city: this.editingUser.city || "",
+          department: this.editingUser.department || "",
+          city: this.editingUser.department || "",
           _parent_dni: this.editingUser.parentDni || "",
-          plan: this.editingUser.plan || "",
+          plan:
+            !this.editingUser.plan || this.editingUser.plan === "default"
+              ? "none"
+              : this.editingUser.plan,
           affiliation_points: this.editingUser.affiliation_points || 0,
         };
 
@@ -1374,13 +1390,21 @@ export default {
             points: this.editingUser.points,
             rank: this.editingUser.rank,
             dni: this.editingUser.dni,
-            city: this.editingUser.city,
+            department: this.editingUser.department,
+            city: this.editingUser.department,
             parent: {
               ...this.users[index].parent,
               dni: this.editingUser.parentDni,
             },
-            plan: this.editingUser.plan,
-            planLabel: this.getPlanLabel(this.editingUser.plan),
+            plan:
+              !this.editingUser.plan || this.editingUser.plan === "default"
+                ? "none"
+                : this.editingUser.plan,
+            planLabel: this.getPlanLabel(this.editingUser.plan, {
+              plan: this.editingUser.plan,
+              affiliated: this.users[index].affiliated,
+              planLabel: null,
+            }),
             affiliation_points: this.editingUser.affiliation_points,
           };
         }
@@ -1463,11 +1487,15 @@ export default {
       return this.getRankLabel(user.rank);
     },
 
-    getPlanLabel(val) {
-      if (val === "basic") return "EJECUTIVO";
-      if (val === "standard") return "DISTRIBUIDOR";
-      if (val === "master") return "EMPRESARIO";
-      return val || "";
+    getPlanLabel(val, user) {
+      if (user && user.planLabel) return user.planLabel;
+      const id = String(val || "")
+        .trim()
+        .toLowerCase();
+      if (!id || id === "none" || id === "default" || id === "admin") return "—";
+      if (val === "basic") return "CLASS";
+      if (val === "standard") return "VIP";
+      return resolvePlanDisplayName({ id: val });
     },
 
     async deleteActivation(user) {

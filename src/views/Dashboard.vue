@@ -221,7 +221,9 @@
                     <div class="activity-text">
                       <strong>{{ affiliation.user.name }}</strong> se afilió al
                       plan
-                      <strong>{{ affiliation.plan.name }}</strong>
+                      <strong>{{
+                        resolvePlanDisplayName(affiliation.plan)
+                      }}</strong>
                     </div>
                     <div class="activity-time">
                       {{ formatTime(affiliation.date) }}
@@ -334,6 +336,7 @@
 import Layout from "@/views/Layout";
 import DashboardCard from "@/components/DashboardCard";
 import api from "@/api";
+import { resolvePlanDisplayName } from "@/utils/planNames";
 
 export default {
   name: "Dashboard",
@@ -435,6 +438,7 @@ export default {
     this.loadDashboardData();
   },
   methods: {
+    resolvePlanDisplayName,
     async loadDashboardData() {
       try {
         const [
