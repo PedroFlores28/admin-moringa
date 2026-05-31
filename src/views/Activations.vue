@@ -705,7 +705,7 @@ export default {
         },
         {
           key: "points",
-          label: "Puntos",
+          label: "Cantidad",
           sortable: true,
           type: "number",
         },
@@ -1032,14 +1032,9 @@ export default {
           price = Number(activation.price).toFixed(2);
         }
 
-        let points = "-";
-        if (
-          activation.points !== null &&
-          activation.points !== undefined &&
-          activation.points !== "" &&
-          !isNaN(Number(activation.points))
-        ) {
-          points = Number(activation.points).toFixed(2);
+        let points = 0;
+        if (Array.isArray(activation.products)) {
+          points = activation.products.reduce((sum, p) => sum + Number(p.total || 0), 0);
         }
 
         // Usuario

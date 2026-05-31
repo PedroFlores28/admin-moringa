@@ -752,6 +752,12 @@ export default {
           sortable: false,
         },
         {
+          key: "quantity",
+          label: "Cantidad",
+          sortable: true,
+          type: "number",
+        },
+        {
           key: "total",
           label: "Total",
           sortable: true,
@@ -1150,6 +1156,7 @@ export default {
               ? (affiliation.difference && affiliation.difference.amount) || 0
               : (affiliation.plan && affiliation.plan.amount) || 0,
           products: this.formatProducts(affiliation),
+          quantity: this.calculateTotalQuantity(affiliation),
           pay_method: affiliation.pay_method || "",
           voucher: this.formatVoucher(affiliation).voucher,
           voucher2: this.formatVoucher(affiliation).voucher2,
@@ -1571,6 +1578,26 @@ export default {
         return products.join(", ");
       }
       return "N/A";
+    },
+
+    calculateTotalQuantity(affiliation) {
+      if (affiliation.products) {
+        return affiliation.products
+          .filter((p) => p.total > 0)
+          .reduce((sum, p) => sum + Number(p.total || 0), 0);
+      }
+      if (affiliation.plan && affiliation.plan.products) {
+        let sum = 0;
+        affiliation.plan.products.forEach((group) => {
+          group.list.forEach((product) => {
+            if (product.total) {
+              sum += Number(product.total || 0);
+            }
+          });
+        });
+        return sum;
+      }
+      return 0;
     },
 
     formatPayMethod(affiliation) {
