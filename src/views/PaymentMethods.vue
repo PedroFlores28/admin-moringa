@@ -91,6 +91,7 @@
                 <th>Banco</th>
                 <th>Tipo</th>
                 <th>CCI</th>
+                <th>QR</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>
                 <th>Acciones</th>
@@ -125,6 +126,15 @@
                 </td>
                 <td>
                   <span class="cci-number">{{ method.cci || '-' }}</span>
+                </td>
+                <td>
+                  <div v-if="method.qrImage" class="qr-table-wrapper">
+                    <img :src="method.qrImage" class="qr-table-img" alt="QR" @click="openQRModal(method.qrImage)" />
+                    <span class="qr-expand-hint" @click="openQRModal(method.qrImage)">
+                      <i class="fas fa-expand"></i>
+                    </span>
+                  </div>
+                  <span v-else class="qr-empty">—</span>
                 </td>
                 <td>
                   <span class="status-badge" :class="method.active ? 'is-success' : 'is-danger'">
@@ -177,7 +187,7 @@
                 </td>
               </tr>
               <tr v-if="filteredMethods.length === 0">
-                <td colspan="7" class="has-text-centered">
+                <td colspan="10" class="has-text-centered">
                   <div class="empty-state">
                     <i class="fas fa-credit-card fa-3x"></i>
                     <p>No se encontraron métodos de pago</p>
@@ -281,6 +291,32 @@
               </div>
 
               <div class="field">
+                <label class="label">Imagen QR</label>
+                <div class="control">
+                  <div class="file-upload-wrapper">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      @change="onQRImageChange"
+                      id="qr-image-input"
+                      class="file-input"
+                    />
+                    <label for="qr-image-input" class="file-label">
+                      <i class="fas fa-qrcode"></i>
+                      <span>{{ currentMethod.qrImage ? 'Cambiar imagen QR' : 'Seleccionar imagen QR' }}</span>
+                    </label>
+                  </div>
+                  <div v-if="currentMethod.qrImage" class="qr-preview-wrapper">
+                    <img :src="currentMethod.qrImage" class="qr-preview-img" alt="QR" />
+                    <button class="qr-remove-btn" @click="removeQRImage" title="Eliminar QR">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="help">Sube una imagen del código QR para que los usuarios puedan escanearlo y pagar fácilmente</p>
+              </div>
+
+              <div class="field">
                 <label class="label">Estado</label>
                 <div class="control">
                   <label class="checkbox">
@@ -315,6 +351,21 @@
             <button class="button" @click="closeModal">Cancelar</button>
           </footer>
         </div>
+      </div>
+
+      <!-- QR Image Modal -->
+      <div class="modal" :class="{ 'is-active': showQRModal }">
+        <div class="modal-background" @click="closeQRModal"></div>
+        <div class="modal-content qr-modal-content">
+          <div class="qr-modal-header">
+            <h3>Código QR</h3>
+            <button class="delete" aria-label="close" @click="closeQRModal"></button>
+          </div>
+          <div class="qr-modal-body">
+            <img :src="qrModalImage" alt="QR Ampliado" class="qr-modal-img" />
+          </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close" @click="closeQRModal"></button>
       </div>
 
       <!-- Loading Overlay -->
@@ -363,6 +414,7 @@
 import Layout from "@/views/Layout";
 import DashboardCard from "@/components/DashboardCard";
 import api from "@/api";
+import lib from "@/lib";
 
 export default {
   components: { Layout, DashboardCard },
@@ -375,14 +427,18 @@ export default {
       searchQuery: "",
       showAddModal: false,
       showEditModal: false,
+      showQRModal: false,
+      qrModalImage: "",
       currentMethod: {
         cuenta: "",
         titular: "",
         banco: "",
         tipo: "",
         cci: "",
+        qrImage: "",
         active: true,
       },
+      qrFile: null,
       notifications: [],
       notificationId: 0,
     };
@@ -464,6 +520,41 @@ export default {
       this.resetForm();
     },
 
+    openQRModal(imageUrl) {
+      this.qrModalImage = imageUrl;
+      this.showQRModal = true;
+    },
+
+    closeQRModal() {
+      this.showQRModal = false;
+      this.qrModalImage = "";
+    },
+
+    onQRImageChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        if (!file.type || !file.type.startsWith('image/')) {
+          this.showNotification('error', 'Error', 'Solo se permiten imágenes (JPG, PNG, WEBP, etc.) para el código QR.');
+          event.target.value = '';
+          return;
+        }
+        this.qrFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.currentMethod.qrImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+
+    removeQRImage() {
+      this.qrFile = null;
+      this.currentMethod.qrImage = "";
+      // Reset the file input
+      const fileInput = document.getElementById('qr-image-input');
+      if (fileInput) fileInput.value = '';
+    },
+
     resetForm() {
       this.currentMethod = {
         cuenta: "",
@@ -471,8 +562,10 @@ export default {
         banco: "",
         tipo: "",
         cci: "",
+        qrImage: "",
         active: true,
       };
+      this.qrFile = null;
     },
 
     async saveMethod() {
@@ -483,6 +576,13 @@ export default {
 
       try {
         this.loading = true;
+
+        // Si hay un archivo QR nuevo, subirlo primero
+        if (this.qrFile) {
+          const qrImageUrl = await lib.upload(this.qrFile, `qr_${Date.now()}.png`, 'payment_methods');
+          this.currentMethod.qrImage = qrImageUrl;
+          this.qrFile = null;
+        }
         
         if (this.showEditModal) {
           // Actualizar método existente
@@ -1115,6 +1215,167 @@ export default {
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+/* QR Image Styles */
+.qr-table-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.qr-table-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.qr-table-img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.qr-expand-hint {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #8b5cf6;
+  color: white;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.qr-table-wrapper:hover .qr-expand-hint {
+  opacity: 1;
+}
+
+.qr-empty {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* QR Preview in form */
+.file-upload-wrapper {
+  margin-bottom: 8px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.file-label:hover {
+  background: #e5e7eb;
+  border-color: #8b5cf6;
+  color: #7c3aed;
+}
+
+.file-label i {
+  font-size: 1.1rem;
+  color: #8b5cf6;
+}
+
+.qr-preview-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.qr-preview-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.qr-remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: white;
+  border: 2px solid white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.qr-remove-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+/* QR Modal */
+.qr-modal-content {
+  max-width: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.qr-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+}
+
+.qr-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.qr-modal-header .delete {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.qr-modal-header .delete:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.qr-modal-body {
+  padding: 24px;
+  text-align: center;
+  background: white;
+}
+
+.qr-modal-img {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 8px;
 }
 
 .confirm-btn {
