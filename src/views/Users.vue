@@ -413,16 +413,15 @@
                     <div class="select is-fullwidth">
                       <select v-model="rankHistoryForm.rank">
                         <option>ACTIVO</option>
-                        <option>BRONCE</option>
                         <option>PLATA</option>
                         <option>ORO</option>
+                        <option>ZAFIRO</option>
                         <option>RUBÍ</option>
                         <option>ESMERALDA</option>
                         <option>DIAMANTE</option>
                         <option>DOBLE DIAMANTE</option>
-                        <option>TRIPLE DIAMANTE</option>
-                        <option>DIAMANTE IMPERIAL</option>
-                        <option value="EMBAJADOR SIFRAH">EMBAJADOR CLASSMORINGA</option>
+                        <option>DIAMANTE CORONA</option>
+                        <option>EMBAJADOR CLASS</option>
                       </select>
                     </div>
                   </div>
