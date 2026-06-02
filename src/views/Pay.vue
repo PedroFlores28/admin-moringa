@@ -92,7 +92,7 @@
                 <div class="form-field">
                   <label class="field-label">
                     <i class="fas fa-dollar-sign"></i>
-                    Monto (USD)
+                    Monto (Bs.)
                   </label>
                   <div class="input-container">
                     <input
@@ -360,7 +360,7 @@ export default {
       }
 
       if (amount > 10000) {
-        this.amountError = "El monto no puede exceder $10,000";
+        this.amountError = "El monto no puede exceder Bs. 10,000";
         return false;
       }
 
@@ -392,7 +392,7 @@ export default {
           this.showErrorMessage("DNI no encontrado");
         } else {
           this.showSuccessMessage(
-            `Pago de $${this.amount} enviado exitosamente`
+            `Pago de Bs. ${this.amount} enviado exitosamente`
           );
           this.resetForm();
           await this.fetchPayments();
@@ -408,7 +408,7 @@ export default {
     async confirmPayment() {
       return new Promise((resolve) => {
         const confirmed = confirm(
-          `¿Desea enviar USD ${this.amount} al CI: ${this.dni}?\n\nEsta acción no se puede deshacer.`
+          `¿Desea enviar Bs. ${this.amount} al CI: ${this.dni}?\n\nEsta acción no se puede deshacer.`
         );
         resolve(confirmed);
       });
