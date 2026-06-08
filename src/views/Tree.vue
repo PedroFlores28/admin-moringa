@@ -490,10 +490,12 @@
                             <div class="node-name">{{ node.name }}</div>
                             <div class="node-details">
                               <small
-                                >Total: {{ node.closed_points_arr || 0 }}</small
+                                >Compras personales:
+                                {{ node.personalProductCount ?? node.points ?? 0 }}</small
                               >
-                              <small v-if="node.points"
-                                >Compras: {{ node.points }}</small
+                              <small
+                                >Volumen grupal:
+                                {{ node.groupProductCount ?? node.total_points ?? 0 }}</small
                               >
                               <small v-if="node.affiliation_points"
                                 >Afiliaciones:
@@ -529,7 +531,12 @@
                                 <div class="node-name">{{ child.name }}</div>
                                 <div class="node-details">
                                   <small
-                                    >Compras: {{ child.points || 0 }}</small
+                                    >Compras personales:
+                                    {{ child.personalProductCount ?? child.points ?? 0 }}</small
+                                  >
+                                  <small
+                                    >Volumen grupal:
+                                    {{ child.groupProductCount ?? child.total_points ?? 0 }}</small
                                   >
                                   <small v-if="child.affiliation_points"
                                     >Afiliaciones:
