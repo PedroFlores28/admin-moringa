@@ -335,13 +335,16 @@ export default {
     },
   },
   async created() {
-    const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
-    this.$store.commit("SET_ACCOUNT", account);
     this.loading = true;
-
     try {
-      // Simular datos MLM - en producción esto vendría de la API
+      const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
+      this.$store.commit("SET_ACCOUNT", account);
+
       const { data } = await api.Tree.GET();
+      if (data.error || !data.node) {
+        this.error = data.msg || "Error al cargar la estructura MLM";
+        return;
+      }
       this.node = this.transformToMLMData(data.node);
       this.Node = this.transformToMLMData(data.node);
     } catch (error) {

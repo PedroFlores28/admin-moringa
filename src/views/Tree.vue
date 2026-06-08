@@ -1321,15 +1321,17 @@ export default {
     },
   },
   async created() {
-    const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
-    this.$store.commit("SET_ACCOUNT", account);
     this.loading = true;
-
-    // Cargar preferencias del usuario
-    this.loadUserPreferences();
-
     try {
+      const account = JSON.parse(localStorage.getItem("adminAccount") || "{}");
+      this.$store.commit("SET_ACCOUNT", account);
+      this.loadUserPreferences();
+
       const { data } = await api.Tree.GET();
+      if (data.error || !data.node) {
+        this.error = data.msg || "Error al cargar la estructura organizacional";
+        return;
+      }
       this.node = data.node;
       this.Node = data.node;
     } catch (error) {
