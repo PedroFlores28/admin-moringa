@@ -8,7 +8,7 @@
       <div class="cierre-header">
         <div>
           <h1 class="cierre-title">⚡ Cierre de Mes</h1>
-          <p class="cierre-subtitle">Motor Go (residual) + bonos logro/mantenimiento por rango</p>
+          <p class="cierre-subtitle">Class Moringa · productos del periodo, residual y bonos por rango</p>
         </div>
         <button class="btn-iniciar" :class="{ 'btn-iniciar--loading': calculating }" @click="closed" :disabled="calculating">
           <span v-if="!calculating">🚀 Iniciar Cierre</span>
@@ -23,20 +23,6 @@
           <div>
             <span class="summary-card__label">Total Bono Residual</span>
             <strong class="summary-card__value">Bs {{ totalResidual.toFixed(2) }}</strong>
-          </div>
-        </div>
-        <div class="summary-card">
-          <span class="summary-card__icon">🌟</span>
-          <div>
-            <span class="summary-card__label">Total Bono Gen. VIP</span>
-            <strong class="summary-card__value">Bs {{ totalGenerationalBonus.toFixed(2) }}</strong>
-          </div>
-        </div>
-        <div class="summary-card">
-          <span class="summary-card__icon">🎁</span>
-          <div>
-            <span class="summary-card__label">Total Bono Ahorro ClassMoringa</span>
-            <strong class="summary-card__value">Bs {{ totalSavingsBonus.toFixed(2) }}</strong>
           </div>
         </div>
         <div class="summary-card">
@@ -67,7 +53,7 @@
         <div class="summary-card summary-card--accent2">
           <span class="summary-card__icon">📌</span>
           <div>
-            <span class="summary-card__label">Total preview (residual + gen + ahorro + rango)</span>
+            <span class="summary-card__label">Total preview (residual + rango)</span>
             <strong class="summary-card__value">Bs {{ totalPreviewCierre.toFixed(2) }}</strong>
           </div>
         </div>
@@ -115,7 +101,7 @@
       <!-- ─── Preview Table ─── -->
       <div class="table-card" v-if="tree && tree.length">
         <div class="table-card__header">
-          <h2 class="table-card__title">📊 Previsualización · Residual (Go) y bonos por rango</h2>
+          <h2 class="table-card__title">📊 Previsualización · Class Moringa</h2>
           <span class="badge">{{ filteredTree.length }} en vista · {{ usersWithRank }} con rango (Bronce+)</span>
         </div>
         <div class="table-search">
@@ -127,13 +113,12 @@
               <tr>
                 <th>#</th>
                 <th>Nombre</th>
-                <th>Pts. Personales</th>
-                <th>Pts. Grupales</th>
+                <th>Productos</th>
+                <th>Productos del Equipo</th>
                 <th>Rango Alcanzado</th>
+                <th>Periodos Calificados</th>
                 <th>Bono Residual</th>
-                <th>Bono Generacional VIP</th>
-                <th>Bono Ahorro ClassMoringa</th>
-                <th>Bono rango (logro / mant.)</th>
+                <th>Bono Rango</th>
               </tr>
             </thead>
             <tbody>
@@ -141,12 +126,14 @@
                 <td class="td-num">{{ i + 1 }}</td>
                 <td class="td-name">
                   {{ node.name }}
-                  <div v-if="node.dni" class="user-dni-sub">DNI {{ node.dni }}</div>
+                  <div v-if="node.token || node.dni" class="user-dni-sub">
+                    Usuario {{ node.token || node.dni }}
+                  </div>
                 </td>
-                <td>{{ node.points || 0 }}</td>
+                <td>{{ displayPersonalProducts(node) }}</td>
                 <td>
                   <div class="group-points-wrapper">
-                    <div class="group-total">Total: {{ (node._total || 0).toFixed(0) }}</div>
+                    <div class="group-total">Total: {{ displayTeamProducts(node) }}</div>
                     <div v-if="node.grouped_points_legs && node.grouped_points_legs.length" class="group-legs-array">
                       <div class="legs-list">
                         <div
@@ -154,15 +141,18 @@
                           :key="`${node.id}-leg-readable-${idx}`"
                           class="legs-list-item"
                         >
-                          <span class="legs-user">{{ leg.name || 'Sin nombre' }} · DNI {{ leg.dni || '-' }}</span>
-                          <span class="legs-points">{{ Number(leg.total_points || 0).toFixed(0) }} pts</span>
+                          <span class="legs-user">
+                            {{ leg.name || 'Sin nombre' }} · Usuario {{ leg.token || leg.dni || '-' }}
+                          </span>
+                          <span class="legs-points">{{ displayLegTeamProducts(leg) }} prod.</span>
                         </div>
                       </div>
                     </div>
-                    <span v-else class="td-zero">[]</span>
+                    <span v-else class="td-zero">—</span>
                   </div>
                 </td>
                 <td><span class="rank-badge" :class="rankClass(node.rank)">{{ node.rank }}</span></td>
+                <td class="td-num">{{ node.qualified_periods != null ? node.qualified_periods : 0 }}</td>
                 <td class="td-bonus td-bonus--detail">
                   <template v-if="node.residual_bonus > 0">
                     <strong>Bs {{ node.residual_bonus.toFixed(2) }}</strong>
@@ -173,37 +163,12 @@
                       <li v-for="(ln, ri) in node.residual_lines" :key="`${node.id}-res-${ri}`">
                         <span class="residual-lines__lvl">Nivel {{ ln.level }}</span>
                         {{ ln.name || '—' }}
-                        <span class="residual-lines__meta">· DNI {{ ln.dni || '—' }}</span>
+                        <span class="residual-lines__meta">· Usuario {{ ln.token || ln.dni || '—' }}</span>
                         <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
                         <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
                         <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
                       </li>
                     </ul>
-                  </template>
-                  <span v-else class="td-zero">—</span>
-                </td>
-                <td class="td-bonus td-bonus--detail">
-                  <template v-if="node.generational_bonus > 0">
-                    <strong>Bs {{ node.generational_bonus.toFixed(2) }}</strong>
-                    <ul
-                      v-if="node.generational_lines && node.generational_lines.length"
-                      class="residual-lines"
-                    >
-                      <li v-for="(ln, ri) in node.generational_lines" :key="`${node.id}-gen-${ri}`">
-                        <span class="residual-lines__lvl">Gen VIP {{ ln.generation || ln.level }}</span>
-                        {{ ln.name || '—' }}
-                        <span class="residual-lines__meta">· DNI {{ ln.dni || '—' }}</span>
-                        <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
-                        <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                        <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
-                      </li>
-                    </ul>
-                  </template>
-                  <span v-else class="td-zero">—</span>
-                </td>
-                <td class="td-bonus td-bonus--detail">
-                  <template v-if="node.savings_bonus > 0">
-                    <strong>Bs {{ node.savings_bonus.toFixed(2) }}</strong>
                   </template>
                   <span v-else class="td-zero">—</span>
                 </td>
@@ -282,12 +247,12 @@
                 <tr>
                   <th>#</th>
                   <th>Nombre</th>
-                  <th>Pts. Grupales</th>
+                  <th>Productos</th>
+                  <th>Productos del Equipo</th>
                   <th>Rango Cerrado</th>
+                  <th>Periodos Calificados</th>
                   <th>Bono Residual</th>
-                  <th>Bono Generacional VIP</th>
-                  <th>Bono Ahorro ClassMoringa</th>
-                  <th>Bono rango (logro / mant.)</th>
+                  <th>Bono Rango</th>
                 </tr>
               </thead>
               <tbody>
@@ -295,11 +260,14 @@
                   <td class="td-num">{{ i + 1 }}</td>
                   <td class="td-name">
                     {{ user.name }}
-                    <div v-if="user.dni" class="user-dni-sub">DNI {{ user.dni }}</div>
+                    <div v-if="user.token || user.dni" class="user-dni-sub">
+                      Usuario {{ user.token || user.dni }}
+                    </div>
                   </td>
+                  <td>{{ displayPersonalProducts(user) }}</td>
                   <td>
                     <div class="group-points-wrapper">
-                      <div class="group-total">Total: {{ (user.total_points || user.total || 0).toFixed(0) }}</div>
+                      <div class="group-total">Total: {{ displayTeamProducts(user) }}</div>
                       <div
                         v-if="user.grouped_points_legs && user.grouped_points_legs.length"
                         class="group-legs-array"
@@ -310,14 +278,17 @@
                             :key="`hist-${ci}-${i}-leg-${idx}`"
                             class="legs-list-item"
                           >
-                            <span class="legs-user">{{ leg.name || 'Sin nombre' }} · DNI {{ leg.dni || '-' }}</span>
-                            <span class="legs-points">{{ Number(leg.total_points || 0).toFixed(0) }} pts</span>
+                            <span class="legs-user">
+                              {{ leg.name || 'Sin nombre' }} · Usuario {{ leg.token || leg.dni || '-' }}
+                            </span>
+                            <span class="legs-points">{{ displayLegTeamProducts(leg) }} prod.</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td><span class="rank-badge" :class="rankClass(user.rank)">{{ user.rank }}</span></td>
+                  <td class="td-num">{{ user.qualified_periods != null ? user.qualified_periods : '—' }}</td>
                   <td class="td-bonus td-bonus--detail">
                     <template v-if="user.residual_bonus > 0">
                       <strong>Bs {{ user.residual_bonus.toFixed(2) }}</strong>
@@ -333,30 +304,6 @@
                           <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
                         </li>
                       </ul>
-                    </template>
-                    <span v-else class="td-zero">—</span>
-                  </td>
-                  <td class="td-bonus td-bonus--detail">
-                    <template v-if="user.generational_bonus > 0">
-                      <strong>Bs {{ user.generational_bonus.toFixed(2) }}</strong>
-                      <ul
-                        v-if="user.generational_lines && user.generational_lines.length"
-                        class="residual-lines residual-lines--compact"
-                      >
-                        <li v-for="(ln, ri) in user.generational_lines" :key="`hist-${ci}-${i}-gen-${ri}`">
-                          <span class="residual-lines__lvl">Gen.{{ ln.generation || ln.level }}</span>
-                          {{ ln.name || '—' }}
-                          <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
-                          <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                          <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
-                        </li>
-                      </ul>
-                    </template>
-                    <span v-else class="td-zero">—</span>
-                  </td>
-                  <td class="td-bonus td-bonus--detail">
-                    <template v-if="user.savings_bonus > 0">
-                      <strong>Bs {{ user.savings_bonus.toFixed(2) }}</strong>
                     </template>
                     <span v-else class="td-zero">—</span>
                   </td>
@@ -504,16 +451,8 @@ export default {
     totalResidual() {
       return (this.tree || []).reduce((sum, n) => sum + (n.residual_bonus || 0), 0)
     },
-    totalGenerationalBonus() {
-      return (this.tree || []).reduce((sum, n) => sum + (n.generational_bonus || 0), 0)
-    },
     totalRankBonus() {
       return (this.tree || []).reduce((sum, n) => sum + (Number(n.rank_bonus_total) || 0), 0)
-    },
-    totalSavingsBonus() {
-      const total = (this.tree || []).reduce((sum, n) => sum + (n.savings_bonus || 0), 0)
-      console.log('%c🐷 totalSavingsBonus computed =', 'color:#e91e63;font-weight:bold', total)
-      return total
     },
     previewRankBonusLogroCount() {
       return (this.tree || []).reduce((acc, node) => {
@@ -528,7 +467,7 @@ export default {
       }, 0)
     },
     totalPreviewCierre() {
-      return this.totalResidual + this.totalGenerationalBonus + this.totalSavingsBonus + this.totalRankBonus
+      return this.totalResidual + this.totalRankBonus
     },
     hasPreviewData() {
       return (
@@ -557,11 +496,27 @@ export default {
           if (!q) return true
           const name = (e.name || '').toLowerCase()
           const dni = String(e.dni || '').toLowerCase()
-          return name.includes(q) || dni.includes(q)
+          const token = String(e.token || '').toLowerCase()
+          return name.includes(q) || dni.includes(q) || token.includes(q)
         })
     },
   },
   methods: {
+    displayPersonalProducts(row) {
+      if (!row) return 0
+      if (row.personal_products != null) return Number(row.personal_products) || 0
+      return Number(row.points) || 0
+    },
+    displayTeamProducts(row) {
+      if (!row) return 0
+      if (row.team_products != null) return Number(row.team_products) || 0
+      return Number(row._total != null ? row._total : row.total_points || row.total) || 0
+    },
+    displayLegTeamProducts(leg) {
+      if (!leg) return 0
+      if (leg.team_products != null) return Number(leg.team_products) || 0
+      return Number(leg.total_points) || 0
+    },
     rankClass(rank) {
       if (!rank) return ''
       return 'rank-' + rank.toLowerCase().replace(/ /g, '-')
@@ -578,7 +533,8 @@ export default {
         if (!q) return true
         const name = (u.name || '').toLowerCase()
         const dni = String(u.dni || '').toLowerCase()
-        return name.includes(q) || dni.includes(q)
+        const token = String(u.token || '').toLowerCase()
+        return name.includes(q) || dni.includes(q) || token.includes(q)
       })
     },
     rankBonusForUser(cl, userId) {
@@ -603,36 +559,9 @@ export default {
     async closed() {
       this.calculating = true
       try {
-        const response = await api.closeds.POST({ action: 'new' })
-        const data = response.data
+        const { data } = await api.closeds.POST({ action: 'new' })
 
-        // LOG INMEDIATO - ver estructura RAW antes de cualquier proceso
-        console.warn('🔴 RAW RESPONSE:', JSON.stringify(response).substring(0, 500))
-        console.warn('🔴 RAW DATA keys:', data ? Object.keys(data) : 'DATA ES NULL/UNDEFINED')
-        console.warn('🔴 data.tree length:', data && data.tree ? data.tree.length : 'NO HAY TREE')
-        console.warn('🔴 Primer nodo RAW:', data && data.tree && data.tree[0] ? JSON.stringify(data.tree[0]).substring(0, 400) : 'SIN NODOS')
-
-        // ─── DEBUG BONO AHORRO ───────────────────────────────────────────
-        console.group('%c🐷 DEBUG BONO AHORRO', 'color:#e91e63;font-weight:bold;font-size:14px')
-        console.log('📦 Respuesta completa del motor:', data)
-        const treeRaw = data.tree || []
-        console.log(`🌳 Nodos en tree: ${treeRaw.length}`)
-        if (treeRaw.length > 0) {
-          console.log('🔍 Primer nodo (estructura completa):', JSON.parse(JSON.stringify(treeRaw[0])))
-          console.log('📋 Campos del primer nodo:', Object.keys(treeRaw[0]))
-        }
-        const nodesWithBonus = treeRaw.filter(n => n.savings_bonus > 0)
-        console.log(`✅ Nodos con savings_bonus > 0: ${nodesWithBonus.length}`)
-        if (nodesWithBonus.length > 0) {
-          nodesWithBonus.forEach(n => console.log(`  → ${n.name || n.id}: savings_bonus = ${n.savings_bonus}`))
-        } else {
-          console.warn('⚠️  Ningún nodo tiene savings_bonus. Revisando top 5 nodos:')
-          treeRaw.slice(0, 5).forEach(n => console.log(`  • ${n.name || n.id}: savings_bonus=${n.savings_bonus}, plan=${n.plan}, points=${n.points}`))
-        }
-        console.groupEnd()
-        // ─────────────────────────────────────────────────────────────────
-
-        this.tree         = treeRaw
+        this.tree         = data.tree || []
         this.virtualResets = data.virtual_resets || []
         this.affiliations = data.affiliations  || []
         this.activations  = data.activations   || []
