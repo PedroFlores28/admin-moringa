@@ -491,11 +491,11 @@
                             <div class="node-details">
                               <small
                                 >Compras personales:
-                                {{ node.personalProductCount ?? node.points ?? 0 }}</small
+                                {{ personalVolume(node) }}</small
                               >
                               <small
                                 >Volumen grupal:
-                                {{ node.groupProductCount ?? node.total_points ?? 0 }}</small
+                                {{ groupVolume(node) }}</small
                               >
                               <small v-if="node.affiliation_points"
                                 >Afiliaciones:
@@ -532,11 +532,11 @@
                                 <div class="node-details">
                                   <small
                                     >Compras personales:
-                                    {{ child.personalProductCount ?? child.points ?? 0 }}</small
+                                    {{ personalVolume(child) }}</small
                                   >
                                   <small
                                     >Volumen grupal:
-                                    {{ child.groupProductCount ?? child.total_points ?? 0 }}</small
+                                    {{ groupVolume(child) }}</small
                                   >
                                   <small v-if="child.affiliation_points"
                                     >Afiliaciones:
@@ -1349,6 +1349,18 @@ export default {
     }
   },
   methods: {
+    personalVolume(node) {
+      if (!node) return 0;
+      if (node.personalProductCount != null) return node.personalProductCount;
+      return Number(node.points) || 0;
+    },
+
+    groupVolume(node) {
+      if (!node) return 0;
+      if (node.groupProductCount != null) return node.groupProductCount;
+      return Number(node.total_points) || 0;
+    },
+
     update(child) {
       this.node = child;
     },
