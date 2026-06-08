@@ -5,6 +5,11 @@ import store from "./store";
 
 import "bulma-switch/dist/css/bulma-switch.min.css";
 
+try {
+  const raw = localStorage.getItem("adminAccount");
+  if (raw) store.commit("SET_ACCOUNT", JSON.parse(raw));
+} catch (_) {}
+
 Vue.config.productionTip = false;
 
 // Deshabilitar todos los logs en producción

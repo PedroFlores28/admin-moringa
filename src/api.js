@@ -103,6 +103,7 @@ class API {
         rankHistory,
         generalPassword,
         adminAuth,
+        adminUsers,
         agenda,
     }) {
         this.users = users;
@@ -143,6 +144,7 @@ class API {
         this.rankHistory = rankHistory;
         this.generalPassword = generalPassword;
         this.adminAuth = adminAuth;
+        this.adminUsers = adminUsers;
         this.agenda = agenda;
     }
 }
@@ -571,6 +573,15 @@ class GeneralPassword {
     }
 }
 
+class AdminUsers {
+    GET() {
+        return axios.get(`/admin/admin-users`);
+    }
+    POST(body) {
+        return axios.post(`/admin/admin-users`, body);
+    }
+}
+
 class AdminAuth {
     login({ emailOrDni, password }) {
         return axios.post(`/admin/auth/login`, { emailOrDni, password });
@@ -646,5 +657,6 @@ export default new API({
     rankHistory: new RankHistory(),
     generalPassword: new GeneralPassword(),
     adminAuth: new AdminAuth(),
+    adminUsers: new AdminUsers(),
     agenda: new Agenda(),
 });

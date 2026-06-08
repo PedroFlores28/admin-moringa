@@ -43,6 +43,9 @@ import Agenda from "./views/Agenda.vue";
 import ChangePassword from "./views/ChangePassword.vue";
 import Sessions from "./views/Sessions.vue";
 import BonusReports from "./views/BonusReports.vue";
+import AdminUsers from "./views/AdminUsers.vue";
+import { hasPermission, routePermission, getDefaultRouteForAccount } from "./lib/permissions";
+import store from "./store";
 
 // import Reports      from './views/Reports.vue'
 
@@ -256,7 +259,7 @@ const routes = [
   {
     path: "/rank-history-summary",
     component: RankHistorySummary,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, permission: "rank-history" },
   },
   {
     path: "/validacion-vouchers",
@@ -266,6 +269,16 @@ const routes = [
   {
     path: "/agenda",
     component: Agenda,
+    meta: { requiresAuth: true, permission: "materials" },
+  },
+  {
+    path: "/admin-users",
+    component: AdminUsers,
+    meta: { requiresAuth: true, title: "Administradores", permission: "admin-users" },
+  },
+  {
+    path: "/forbidden",
+    component: Dashboard,
     meta: { requiresAuth: true },
   },
 ];
@@ -278,6 +291,19 @@ const router = new Router({
 
 const DEFAULT_DOCUMENT_TITLE = "Moringa Admin";
 
+function hydrateAccount() {
+  if (store.state.account) return store.state.account;
+  try {
+    const raw = localStorage.getItem("adminAccount");
+    if (raw) {
+      const account = JSON.parse(raw);
+      store.commit("SET_ACCOUNT", account);
+      return account;
+    }
+  } catch (_) {}
+  return null;
+}
+
 router.beforeEach((to, from, next) => {
   const requiresNoAuth = to.matched.some(
     (record) => record.meta.requiresNoAuth
@@ -287,10 +313,23 @@ router.beforeEach((to, from, next) => {
   const session = localStorage.getItem("adminSession");
 
   if (requiresNoAuth && session) {
-    next({ path: "/dashboard" });
+    const account = hydrateAccount();
+    return next({ path: getDefaultRouteForAccount(account) });
   }
   if (requiresAuth && !session) {
-    next({ path: "/login" });
+    return next({ path: "/login" });
+  }
+
+  if (requiresAuth && session) {
+    const account = hydrateAccount();
+    const perm = to.meta && to.meta.permission ? to.meta.permission : routePermission(to.path);
+    if (perm && account && !hasPermission(account, perm)) {
+      const fallback = getDefaultRouteForAccount(account);
+      if (to.path === fallback) {
+        return next({ path: "/change-password" });
+      }
+      return next({ path: fallback });
+    }
   }
 
   next();

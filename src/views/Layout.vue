@@ -21,7 +21,7 @@
             <!-- First Row - Main Actions -->
             <div class="nav-row">
               <!-- Dashboard -->
-              <a class="navbar-item" href="/dashboard">
+              <a class="navbar-item" href="/dashboard" v-if="accountType !== 'admin' || can('dashboard')">
                 <span class="icon">
                   <i class="fas fa-tachometer-alt"></i>
                 </span>
@@ -32,6 +32,7 @@
               <div
                 class="navbar-item menu-trigger"
                 @click="toggleMenu('users')"
+                v-if="accountType !== 'admin' || can('users')"
               >
                 <span class="icon">
                   <i class="fas fa-users"></i>
@@ -46,6 +47,7 @@
               <div
                 class="navbar-item menu-trigger"
                 @click="toggleMenu('affiliations')"
+                v-if="accountType !== 'admin' || can('affiliations')"
               >
                 <span class="icon">
                   <i class="fas fa-handshake"></i>
@@ -60,7 +62,7 @@
               <!-- Activaciones se navega desde los tabs dentro de Afiliaciones -->
 
               <!-- Products -->
-              <a class="navbar-item" href="/products">
+              <a class="navbar-item" href="/products" v-if="accountType !== 'admin' || can('products')">
                 <span class="icon">
                   <i class="fas fa-box"></i>
                 </span>
@@ -68,7 +70,7 @@
               </a>
 
               <!-- Transactions -->
-              <a class="navbar-item" href="/trans">
+              <a class="navbar-item" href="/trans" v-if="accountType !== 'admin' || can('transactions')">
                 <span class="icon">
                   <i class="fas fa-exchange-alt"></i>
                 </span>
@@ -98,7 +100,7 @@
               <div
                 class="navbar-item menu-trigger"
                 @click="toggleMenu('collects')"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('collects')"
               >
                 <span class="icon">
                   <i class="fas fa-money-bill-wave"></i>
@@ -110,7 +112,7 @@
               </div>
 
               <!-- Inventory -->
-              <a class="navbar-item" href="/kadex">
+              <a class="navbar-item" href="/kadex" v-if="accountType !== 'admin' || can('kadex')">
                 <span class="icon">
                   <i class="fas fa-warehouse"></i>
                 </span>
@@ -121,7 +123,7 @@
               <a
                 class="navbar-item"
                 href="/banner"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('banner')"
               >
                 <span class="icon">
                   <i class="fas fa-image"></i>
@@ -133,7 +135,7 @@
               <a
                 class="navbar-item"
                 href="/materials"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('materials')"
               >
                 <span class="icon">
                   <i class="fas fa-tools"></i>
@@ -145,7 +147,7 @@
               <a
                 class="navbar-item"
                 href="/tree"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('tree')"
               >
                 <span class="icon">
                   <i class="fas fa-sitemap"></i>
@@ -169,6 +171,7 @@
               <div
                 class="navbar-item menu-trigger"
                 @click="toggleMenu('payments')"
+                v-if="accountType !== 'admin' || can('payments')"
               >
                 <span class="icon">
                   <i class="fas fa-credit-card"></i>
@@ -195,7 +198,7 @@
               <div
                 class="navbar-item menu-trigger"
                 @click="toggleMenu('offices')"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('offices')"
               >
                 <span class="icon">
                   <i class="fas fa-building"></i>
@@ -210,6 +213,7 @@
               <div
                 class="navbar-item menu-trigger"
                 @click="toggleMenu('operations')"
+                v-if="accountType !== 'admin' || can('operations')"
               >
                 <span class="icon">
                   <i class="fas fa-shopping-cart"></i>
@@ -224,7 +228,7 @@
               <a
                 class="navbar-item"
                 href="/closed"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('closed')"
               >
                 <span class="icon">
                   <i class="fas fa-lock"></i>
@@ -235,7 +239,7 @@
               <a
                 class="navbar-item"
                 href="/bonus-reports"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('bonus-reports')"
               >
                 <span class="icon">
                   <i class="fas fa-hand-holding-usd"></i>
@@ -246,7 +250,7 @@
               <a
                 class="navbar-item"
                 href="/rank-history-summary"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('rank-history')"
               >
                 <span class="icon">
                   <i class="fas fa-history"></i>
@@ -258,7 +262,7 @@
               <a
                 class="navbar-item"
                 href="/periods"
-                v-if="accountType === 'admin'"
+                v-if="accountType === 'admin' && can('periods')"
               >
                 <span class="icon">
                   <i class="fas fa-calendar-alt"></i>
@@ -266,6 +270,17 @@
                 <span>Periodos</span>
               </a>
 
+              <!-- Administradores del panel -->
+              <a
+                class="navbar-item"
+                href="/admin-users"
+                v-if="accountType === 'admin' && isSuperAdmin"
+              >
+                <span class="icon">
+                  <i class="fas fa-users-cog"></i>
+                </span>
+                <span>Administradores</span>
+              </a>
 
             </div>
           </div>
@@ -299,7 +314,7 @@
                 <a
                   class="navbar-item"
                   href="/sessions"
-                  v-if="accountType === 'admin'"
+                  v-if="accountType === 'admin' && can('sessions')"
                   @click="closeSettings"
                 >
                   <span class="icon">
@@ -392,7 +407,12 @@
             </span>
             <span>Usuarios Activados</span>
           </a>
-          <a class="menu-item" href="/rank-history-summary" @click="closeMenu">
+          <a
+            class="menu-item"
+            href="/rank-history-summary"
+            @click="closeMenu"
+            v-if="can('rank-history')"
+          >
             <span class="icon">
               <i class="fas fa-history"></i>
             </span>
@@ -431,7 +451,7 @@
         </div>
 
         <div v-if="activeMenu === 'payments'" class="menu-items">
-          <a class="menu-item" href="/validacion-vouchers" @click="closeMenu" v-if="accountType === 'admin'">
+          <a class="menu-item" href="/validacion-vouchers" @click="closeMenu" v-if="accountType === 'admin' && can('payments')">
             <span class="icon">
               <i class="fas fa-receipt"></i>
             </span>
@@ -487,6 +507,8 @@
 </template>
 
 <script>
+import { hasPermission, isSuperAdmin } from "@/lib/permissions";
+
 export default {
   data() {
     return {
@@ -503,8 +525,10 @@ export default {
     // Agregar computed para debug
     accountType() {
       const account = this.$store.state.account;
-      console.log('Account type:', account && account.type);
-      return (account && account.type) || 'admin'; // Default a admin si no está disponible
+      return (account && account.type) || "admin";
+    },
+    isSuperAdmin() {
+      return isSuperAdmin(this.$store.state.account);
     },
   },
   mounted() {
@@ -517,6 +541,9 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    can(module) {
+      return hasPermission(this.$store.state.account, module);
+    },
     handleScroll() {
       this.showFAB = window.scrollY > 300;
     },
