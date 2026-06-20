@@ -684,6 +684,18 @@ export default {
       ],
       itemActions: [
         {
+          key: "direct_login",
+          label: "Acceso Directo",
+          icon: "fas fa-sign-in-alt",
+          class: "is-success",
+        },
+        {
+          key: "shop_as",
+          label: "Loguear como Socio",
+          icon: "fas fa-shopping-cart",
+          class: "is-link",
+        },
+        {
           key: "config_dashboard",
           label: "Config. Dashboard",
           icon: "fas fa-cog",
@@ -980,6 +992,15 @@ export default {
 
     handleItemAction({ action, item }) {
       switch (action) {
+        case "direct_login":
+          this.directLogin(item.raw || item);
+          break;
+        case "shop_as":
+          this.$router.push({
+            path: '/operationBsplan',
+            query: { dni: item.dni }
+          });
+          break;
         case "config_dashboard":
           this.configUserDashboard(item.raw || item);
           break;
@@ -995,6 +1016,59 @@ export default {
         case "delete_activation":
           this.deleteActivation(item.raw || item);
           break;
+      }
+    },
+
+    async directLogin(user) {
+      try {
+        const adminSession = localStorage.getItem("adminSession") || "otdxDIds3wtui3enxb";
+        
+        Swal.fire({
+          title: "Generando acceso directo...",
+          text: "Iniciando sesión segura en la cuenta del usuario",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        const { data } = await api.users.sudo({
+          dni: user.dni,
+          admin_session: adminSession,
+        });
+
+        Swal.close();
+
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: data.msg || "No se pudo generar el acceso directo",
+          });
+          return;
+        }
+
+        const appUrl = process.env.VUE_APP_APP || "http://localhost:8080";
+        
+        const params = new URLSearchParams({
+          session: data.session,
+          name: data.user.name || "",
+          lastName: data.user.lastName || "",
+          dni: data.user.dni || "",
+          affiliated: String(data.user.affiliated),
+        });
+
+        const targetUrl = `${appUrl}/sudo-login?${params.toString()}`;
+        window.open(targetUrl, "_blank");
+
+      } catch (error) {
+        Swal.close();
+        console.error("Error in directLogin:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error al intentar ingresar a la cuenta del usuario",
+        });
       }
     },
 

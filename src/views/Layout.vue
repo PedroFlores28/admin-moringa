@@ -210,19 +210,16 @@
               </div>
 
               <!-- Operations Menu -->
-              <div
-                class="navbar-item menu-trigger"
-                @click="toggleMenu('operations')"
+              <a
+                class="navbar-item"
+                href="/operationBsplan"
                 v-if="accountType !== 'admin' || can('operations')"
               >
                 <span class="icon">
                   <i class="fas fa-shopping-cart"></i>
                 </span>
                 <span>Compras</span>
-                <span class="icon is-small">
-                  <i class="fas fa-chevron-down"></i>
-                </span>
-              </div>
+              </a>
 
               <!-- Closures -->
               <a
@@ -486,20 +483,7 @@
           </a>
         </div>
 
-        <div v-if="activeMenu === 'operations'" class="menu-items">
-          <a class="menu-item" href="/operationBsplan" @click="closeMenu">
-            <span class="icon">
-              <i class="fas fa-handshake"></i>
-            </span>
-            <span>Nueva Afiliación</span>
-          </a>
-          <a class="menu-item" href="/operationBsproducts" @click="closeMenu">
-            <span class="icon">
-              <i class="fas fa-box"></i>
-            </span>
-            <span>Reconsumo de Productos</span>
-          </a>
-        </div>
+
 
       </div>
     </div>
