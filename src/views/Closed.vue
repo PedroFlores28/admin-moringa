@@ -166,9 +166,10 @@
                   <span class="rank-badge" :class="rankClass(node.rank)">{{ !node.rank || node.rank === 'none' ? 'Sin rango' : node.rank }}</span>
                 </td>
                 <td class="td-num">{{ node.qualified_periods != null ? node.qualified_periods : 0 }}</td>
-                <td class="td-bonus td-bonus--detail">
+                <td class="td-bonus td-bonus--detail td-bonus--residual">
                   <template v-if="node.residual_bonus > 0">
-                    <strong>Bs {{ node.residual_bonus.toFixed(2) }}</strong>
+                    <strong class="residual-amt">Bs {{ node.residual_bonus.toFixed(2) }}</strong>
+                    <div class="residual-realtime-note">Pagado en tiempo real</div>
                     <ul
                       v-if="node.residual_lines && node.residual_lines.length"
                       class="residual-lines"
@@ -315,9 +316,10 @@
                     <span class="rank-badge" :class="rankClass(user.rank)">{{ !user.rank || user.rank === 'none' ? 'Sin rango' : user.rank }}</span>
                   </td>
                   <td class="td-num">{{ user.qualified_periods != null ? user.qualified_periods : '—' }}</td>
-                  <td class="td-bonus td-bonus--detail">
+                  <td class="td-bonus td-bonus--detail td-bonus--residual">
                     <template v-if="user.residual_bonus > 0">
-                      <strong>Bs {{ user.residual_bonus.toFixed(2) }}</strong>
+                      <strong class="residual-amt">Bs {{ user.residual_bonus.toFixed(2) }}</strong>
+                      <div class="residual-realtime-note">Pagado en tiempo real</div>
                       <ul
                         v-if="user.residual_lines && user.residual_lines.length"
                         class="residual-lines residual-lines--compact"
@@ -888,3 +890,7 @@ export default {
 </style>
 
 .sub-detail { font-size: 0.85rem; color: #4a5568; line-height: 1.4; }
+
+.td-bonus--residual .residual-amt { color: #718096 !important; }
+.residual-realtime-note { font-size: 0.75rem; color: #a0aec0; font-style: italic; margin-bottom: 4px; }
+.td-bonus--residual .residual-lines__amt { color: #718096; }
