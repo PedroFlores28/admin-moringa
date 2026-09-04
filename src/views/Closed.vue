@@ -115,7 +115,7 @@
                 <th>Nombre</th>
                 <th>Productos</th>
                 <th>Productos del Equipo</th>
-                <th>Rango Alcanzado</th>
+                <th>Estado | Rango Alcanzado</th>
                 <th>Periodos Calificados</th>
                 <th>Bono Residual</th>
                 <th>Bono Rango</th>
@@ -151,7 +151,11 @@
                     <span v-else class="td-zero">—</span>
                   </div>
                 </td>
-                <td><span class="rank-badge" :class="rankClass(node.rank)">{{ node.rank }}</span></td>
+                <td>
+                  <span class="rank-badge rank-activo" style="margin-right: 4px;">ACTIVO</span>
+                  <span style="color: #cbd5e0; margin-right: 4px;">|</span>
+                  <span class="rank-badge" :class="rankClass(node.rank)">{{ !node.rank || node.rank === 'none' ? 'Sin rango' : node.rank }}</span>
+                </td>
                 <td class="td-num">{{ node.qualified_periods != null ? node.qualified_periods : 0 }}</td>
                 <td class="td-bonus td-bonus--detail">
                   <template v-if="node.residual_bonus > 0">
@@ -249,7 +253,7 @@
                   <th>Nombre</th>
                   <th>Productos</th>
                   <th>Productos del Equipo</th>
-                  <th>Rango Cerrado</th>
+                  <th>Estado | Rango Cerrado</th>
                   <th>Periodos Calificados</th>
                   <th>Bono Residual</th>
                   <th>Bono Rango</th>
@@ -287,7 +291,11 @@
                       </div>
                     </div>
                   </td>
-                  <td><span class="rank-badge" :class="rankClass(user.rank)">{{ user.rank }}</span></td>
+                  <td>
+                    <span class="rank-badge rank-activo" style="margin-right: 4px;">ACTIVO</span>
+                    <span style="color: #cbd5e0; margin-right: 4px;">|</span>
+                    <span class="rank-badge" :class="rankClass(user.rank)">{{ !user.rank || user.rank === 'none' ? 'Sin rango' : user.rank }}</span>
+                  </td>
                   <td class="td-num">{{ user.qualified_periods != null ? user.qualified_periods : '—' }}</td>
                   <td class="td-bonus td-bonus--detail">
                     <template v-if="user.residual_bonus > 0">
