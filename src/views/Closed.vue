@@ -131,7 +131,15 @@
                     <div v-if="node.dni">CI: {{ node.dni }}</div>
                   </div>
                 </td>
-                <td>{{ displayPersonalProducts(node) }}</td>
+                <td>
+                  <div class="personal-products-breakdown">
+                    <div v-if="node.personal_affiliations > 0" class="sub-detail">Afiliaciones: {{ node.personal_affiliations }} {{ node.personal_affiliations === 1 ? 'producto' : 'productos' }}</div>
+                    <div v-if="node.personal_recompras > 0" class="sub-detail">Recompras: {{ node.personal_recompras }} {{ node.personal_recompras === 1 ? 'producto' : 'productos' }}</div>
+                    <div class="group-total" :style="(node.personal_affiliations > 0 || node.personal_recompras > 0) ? 'margin-top: 4px; padding-top: 4px; border-top: 1px dashed #e2e8f0;' : ''">
+                      Total: {{ displayPersonalProducts(node) }} {{ displayPersonalProducts(node) === 1 ? 'producto' : 'productos' }}
+                    </div>
+                  </div>
+                </td>
                 <td>
                   <div class="group-points-wrapper">
                     <div class="group-total">Total: {{ displayTeamProducts(node) }}</div>
@@ -270,7 +278,15 @@
                       <div v-if="user.dni">CI: {{ user.dni }}</div>
                     </div>
                   </td>
-                  <td>{{ displayPersonalProducts(user) }}</td>
+                  <td>
+                    <div class="personal-products-breakdown">
+                      <div v-if="user.personal_affiliations > 0" class="sub-detail">Afiliaciones: {{ user.personal_affiliations }} {{ user.personal_affiliations === 1 ? 'producto' : 'productos' }}</div>
+                      <div v-if="user.personal_recompras > 0" class="sub-detail">Recompras: {{ user.personal_recompras }} {{ user.personal_recompras === 1 ? 'producto' : 'productos' }}</div>
+                      <div class="group-total" :style="(user.personal_affiliations > 0 || user.personal_recompras > 0) ? 'margin-top: 4px; padding-top: 4px; border-top: 1px dashed #e2e8f0;' : ''">
+                        Total: {{ displayPersonalProducts(user) }} {{ displayPersonalProducts(user) === 1 ? 'producto' : 'productos' }}
+                      </div>
+                    </div>
+                  </td>
                   <td>
                     <div class="group-points-wrapper">
                       <div class="group-total">Total: {{ displayTeamProducts(user) }}</div>
@@ -870,3 +886,5 @@ export default {
 
 .historical-card { margin-bottom: 14px; }
 </style>
+
+.sub-detail { font-size: 0.85rem; color: #4a5568; line-height: 1.4; }
