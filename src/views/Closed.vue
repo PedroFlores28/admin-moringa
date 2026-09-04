@@ -126,8 +126,9 @@
                 <td class="td-num">{{ i + 1 }}</td>
                 <td class="td-name">
                   {{ node.name }}
-                  <div v-if="node.token || node.dni" class="user-dni-sub">
-                    Usuario {{ node.token || node.dni }}
+                  <div class="user-dni-sub">
+                    <div v-if="node.token || node.id">Usuario: {{ node.token || node.id }}</div>
+                    <div v-if="node.dni">CI: {{ node.dni }}</div>
                   </div>
                 </td>
                 <td>{{ displayPersonalProducts(node) }}</td>
@@ -264,8 +265,9 @@
                   <td class="td-num">{{ i + 1 }}</td>
                   <td class="td-name">
                     {{ user.name }}
-                    <div v-if="user.token || user.dni" class="user-dni-sub">
-                      Usuario {{ user.token || user.dni }}
+                    <div class="user-dni-sub">
+                      <div v-if="user.token || user.id || user.user_id">Usuario: {{ user.token || user.id || user.user_id }}</div>
+                      <div v-if="user.dni">CI: {{ user.dni }}</div>
                     </div>
                   </td>
                   <td>{{ displayPersonalProducts(user) }}</td>
