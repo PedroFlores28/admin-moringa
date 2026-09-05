@@ -102,7 +102,7 @@
       <div class="table-card" v-if="tree && tree.length">
         <div class="table-card__header">
           <h2 class="table-card__title">📊 Previsualización · Class Moringa</h2>
-          <span class="badge">{{ filteredTree.length }} en vista · {{ usersWithRank }} con rango (Bronce+)</span>
+          <span class="badge">{{ filteredTree.length }} en vista · {{ usersWithRank }} con rango (Plata+)</span>
         </div>
         <div class="table-search">
           <input v-model="search" class="search-input" placeholder="🔍 Buscar usuario..." />
@@ -113,12 +113,14 @@
               <tr>
                 <th>#</th>
                 <th>Nombre</th>
-                <th>Productos</th>
-                <th>Productos del Equipo</th>
-                <th>Estado | Rango Alcanzado</th>
-                <th>Periodos Calificados</th>
-                <th>Bono Residual</th>
-                <th>Bono Rango</th>
+                <th>Productos personales</th>
+                <th>Productos del equipo</th>
+                <th>Estado</th>
+                <th>Rango alcanzado</th>
+                <th>Calificación actual</th>
+                <th>Ciclos</th>
+                <th>Bono residual (informativo)</th>
+                <th>Bono de recalificación</th>
               </tr>
             </thead>
             <tbody>
@@ -131,71 +133,88 @@
                     <div v-if="node.dni">CI: {{ node.dni }}</div>
                   </div>
                 </td>
-                <td>
-                  <div class="personal-products-breakdown">
-                    <div v-if="node.personal_affiliations > 0" class="sub-detail">Afiliaciones: {{ node.personal_affiliations }} {{ node.personal_affiliations === 1 ? 'producto' : 'productos' }}</div>
-                    <div v-if="node.personal_recompras > 0" class="sub-detail">Recompras: {{ node.personal_recompras }} {{ node.personal_recompras === 1 ? 'producto' : 'productos' }}</div>
-                    <div class="group-total" :style="(node.personal_affiliations > 0 || node.personal_recompras > 0) ? 'margin-top: 4px; padding-top: 4px; border-top: 1px dashed #e2e8f0;' : ''">
-                      Total: {{ displayPersonalProducts(node) }} {{ displayPersonalProducts(node) === 1 ? 'producto' : 'productos' }}
+                <td class="td-compact">
+                  <div class="mini-card">
+                    <div class="mini-card__line">
+                      Afiliación: {{ Number(node.personal_affiliations) || 0 }}
+                      · Recompra: {{ Number(node.personal_recompras) || 0 }}
                     </div>
+                    <div class="mini-card__total">Total: {{ displayPersonalProducts(node) }} prod.</div>
                   </div>
                 </td>
-                <td>
-                  <div class="group-points-wrapper">
-                    <div class="group-total">Total: {{ displayTeamProducts(node) }}</div>
-                    <div v-if="node.grouped_points_legs && node.grouped_points_legs.length" class="group-legs-array">
-                      <div class="legs-list">
-                        <div
-                          v-for="(leg, idx) in node.grouped_points_legs"
-                          :key="`${node.id}-leg-readable-${idx}`"
-                          class="legs-list-item"
-                        >
-                          <span class="legs-user">
-                            {{ leg.name || 'Sin nombre' }} · Usuario {{ leg.token || leg.dni || '-' }}
-                          </span>
-                          <span class="legs-points">{{ displayLegTeamProducts(leg) }} prod.</span>
-                        </div>
+                <td class="td-compact">
+                  <div class="mini-card mini-card--team">
+                    <div class="mini-card__total">Total equipo: {{ displayTeamProducts(node) }}</div>
+                    <div v-if="teamLegsWithProducts(node).length" class="mini-legs">
+                      <div
+                        v-for="(leg, idx) in teamLegsWithProducts(node)"
+                        :key="`${node.id}-leg-readable-${idx}`"
+                        class="mini-leg"
+                      >
+                        <span class="mini-leg__name">{{ leg.name || 'Sin nombre' }}</span>
+                        <span class="mini-leg__pts">{{ displayLegTeamProducts(leg) }}</span>
                       </div>
                     </div>
                     <span v-else class="td-zero">—</span>
                   </div>
                 </td>
                 <td>
-                  <span class="rank-badge rank-activo" style="margin-right: 4px;">ACTIVO</span>
-                  <span style="color: #cbd5e0; margin-right: 4px;">|</span>
-                  <span class="rank-badge" :class="rankClass(node.rank)">{{ !node.rank || node.rank === 'none' ? 'Sin rango' : node.rank }}</span>
+                  <span
+                    class="status-pill"
+                    :class="isMonthlyActive(node) ? 'status-pill--on' : 'status-pill--off'"
+                  >{{ isMonthlyActive(node) ? 'ACTIVO' : 'INACTIVO' }}</span>
                 </td>
-                <td class="td-num">{{ node.qualified_periods != null ? node.qualified_periods : 0 }}</td>
-                <td class="td-bonus td-bonus--detail td-bonus--residual">
-                  <template v-if="node.residual_bonus > 0">
-                    <strong class="residual-amt">Bs {{ node.residual_bonus.toFixed(2) }}</strong>
-                    <div class="residual-realtime-note">Pagado en tiempo real</div>
-                    <ul
-                      v-if="node.residual_lines && node.residual_lines.length"
-                      class="residual-lines"
+                <td>
+                  <span class="rank-badge" :class="rankClass(achievedRank(node))">{{ rankLabel(achievedRank(node)) }}</span>
+                </td>
+                <td class="td-qualification">
+                  <div class="qual-card">
+                    <div class="qual-title" :class="{ 'qual-title--off': !qualificationHasProgress(node) }">
+                      {{ qualificationTitle(node) }}
+                    </div>
+                    <div class="qual-sub">{{ qualificationSubtitle(node) }}</div>
+                    <template v-if="isMonthlyActive(node) && qualificationHasProgress(node)">
+                      <div class="qual-meter">
+                        <span>Volumen: {{ qualificationVolume(node) }}</span>
+                        <div class="qual-bar">
+                          <div class="qual-bar__fill" :style="{ width: qualificationVolumePct(node) + '%' }"></div>
+                        </div>
+                      </div>
+                      <div v-if="qualificationStructure(node)" class="qual-structure">
+                        {{ qualificationStructure(node) }}
+                      </div>
+                    </template>
+                  </div>
+                </td>
+                <td class="td-cycles">
+                  <div class="cycle-grid">
+                    <div
+                      v-for="c in cycleBoxes(node)"
+                      :key="`${node.id}-c-${c.index}`"
+                      class="cycle-cell"
                     >
-                      <li v-for="(ln, ri) in node.residual_lines" :key="`${node.id}-res-${ri}`">
-                        <span class="residual-lines__lvl">Nivel {{ ln.level }}</span>
-                        {{ ln.name || '—' }}
-                        <span class="residual-lines__meta">· Usuario {{ ln.token || ln.dni || '—' }}</span>
-                        <span class="residual-lines__meta">· PR {{ Number(ln.pr || 0).toFixed(0) }}</span>
-                        <span class="residual-lines__meta">· {{ formatResidualPct(ln.percentage) }}</span>
-                        <span class="residual-lines__amt">→ Bs {{ Number(ln.amount || 0).toFixed(2) }}</span>
-                      </li>
-                    </ul>
-                  </template>
-                  <span v-else class="td-zero">—</span>
+                      <div
+                        class="cycle-box"
+                        :class="[
+                          'cycle-box--' + c.status,
+                          { 'cycle-box--locked': c.locked }
+                        ]"
+                      >
+                        <span class="cycle-box__code">{{ c.shortLabel || ('C' + c.index) }}</span>
+                        <i v-if="c.locked" class="fas fa-lock cycle-box__lock"></i>
+                      </div>
+                      <span class="cycle-label" :class="'cycle-label--' + c.status">{{ cycleStatusText(c) }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="td-residual">
+                  <div class="residual-compact" :title="residualTooltip(node)">
+                    Bs {{ Number(node.residual_bonus || 0).toFixed(0) }}
+                    <span class="residual-compact__note">(informativo)</span>
+                  </div>
                 </td>
                 <td class="td-rank-bonus">
-                  <template v-if="(node.rank_bonus_total || 0) > 0">
-                    <strong>Bs {{ Number(node.rank_bonus_total).toFixed(2) }}</strong>
-                    <ul v-if="node.rank_bonus_lines && node.rank_bonus_lines.length" class="rank-bonus-lines">
-                      <li v-for="(ln, li) in node.rank_bonus_lines" :key="li">
-                        <span class="rank-bonus-tipo">{{ ln.tipo }}</span>
-                        {{ ln.rank }} · Bs {{ Number(ln.amount).toFixed(2) }}
-                      </li>
-                    </ul>
-                  </template>
+                  <strong v-if="recalificationAmount(node) > 0">Bs {{ recalificationAmount(node).toFixed(2) }}</strong>
                   <span v-else class="td-zero">—</span>
                 </td>
               </tr>
@@ -434,20 +453,10 @@ function normalizeRankKey(rank) {
     .toLowerCase()
 }
 
-function rankKey(rank) {
-  return String(rank || '').trim().toLowerCase()
-}
-
-function isRankBronceOrAbove(rank) {
+function isRankPlataOrAbove(rank) {
   const k = normalizeRankKey(rank)
-  return !!k && RANKS_BRONCE_ADELANTE.has(k)
-}
-
-/** Tabla de preview: desde `active`/`activo` (activado sin rango de carrera) hasta el máximo. Nunca `none`. */
-function isRankShownInPreviewTable(rank) {
-  const k = rankKey(rank)
-  if (!k) return false
-  return k !== 'none'
+  if (!k || k === 'bronce' || k === 'activo' || k === 'none') return false
+  return RANKS_BRONCE_ADELANTE.has(k)
 }
 
 export default {
@@ -509,9 +518,9 @@ export default {
         0
       )
     },
-    /** Card: solo Bronce en adelante (BRONCE/PLATA/… del motor Go o legacy star/silver…). No cuenta `none` ni ACTIVO. */
+    /** Card: Plata en adelante. */
     usersWithRank() {
-      return (this.tree || []).filter((e) => isRankBronceOrAbove(e.rank)).length
+      return (this.tree || []).filter((e) => isRankPlataOrAbove(e.max_rank || e.rank)).length
     },
     activosFull() {
       return (this.tree || []).filter(e => e.activated).length
@@ -519,7 +528,6 @@ export default {
     filteredTree() {
       const q = this.search.toLowerCase()
       return (this.tree || [])
-        .filter((e) => isRankShownInPreviewTable(e.rank))
         .filter((e) => {
           if (!q) return true
           const name = (e.name || '').toLowerCase()
@@ -545,9 +553,106 @@ export default {
       if (leg.team_products != null) return Number(leg.team_products) || 0
       return Number(leg.total_points) || 0
     },
+    teamLegsWithProducts(row) {
+      const legs = (row && row.grouped_points_legs) || []
+      return legs.filter((leg) => this.displayLegTeamProducts(leg) > 0).slice(0, 4)
+    },
+    isMonthlyActive(row) {
+      if (!row) return false
+      if (row.monthly_active != null) return !!row.monthly_active
+      return !!(row.activated || row._activated)
+    },
+    achievedRank(row) {
+      if (!row) return ''
+      return row.max_rank || row.rank || ''
+    },
+    rankLabel(rank) {
+      const k = String(rank || '').trim()
+      if (!k || k.toLowerCase() === 'none' || k.toLowerCase() === 'activo') return 'Sin rango'
+      return k
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+    },
+    qualificationOf(row) {
+      return (row && row.qualification) || {}
+    },
+    qualificationTitle(row) {
+      const q = this.qualificationOf(row)
+      if (q.title) return q.title
+      return this.isMonthlyActive(row) ? 'Buscando rango' : 'Sin calificación'
+    },
+    qualificationSubtitle(row) {
+      const q = this.qualificationOf(row)
+      if (!this.isMonthlyActive(row)) {
+        return q.subtitle || 'Usuario inactivo. No acumula volumen ni requisitos.'
+      }
+      if (!this.qualificationHasProgress(row)) {
+        return 'Comienza a calificar en el próximo ciclo.'
+      }
+      return q.subtitle || ''
+    },
+    qualificationHasProgress(row) {
+      if (!this.isMonthlyActive(row)) return false
+      const q = this.qualificationOf(row)
+      const volume = Number(q.volumeCurrent) || 0
+      const structure = Number(q.structureCurrent) || 0
+      const cycles = this.cycleBoxes(row)
+      const advanced = cycles.some((c) => c.status === 'completed' || c.status === 'in_progress')
+      return volume > 0 || structure > 0 || advanced
+    },
+    residualTooltip(row) {
+      const lines = (row && row.residual_lines) || []
+      if (!lines.length) return 'Bono residual informativo'
+      return lines
+        .slice(0, 8)
+        .map((ln) => `Nivel ${ln.level} · ${ln.name || '—'} · Bs ${Number(ln.amount || 0).toFixed(2)}`)
+        .join('\n')
+    },
+    qualificationVolume(row) {
+      const q = this.qualificationOf(row)
+      const current = Number(q.volumeCurrent) || 0
+      const required = Number(q.volumeRequired) || 0
+      return current + ' / ' + required
+    },
+    qualificationVolumePct(row) {
+      const q = this.qualificationOf(row)
+      const required = Number(q.volumeRequired) || 0
+      if (!required) return 0
+      return Math.min(100, Math.round(((Number(q.volumeCurrent) || 0) / required) * 100))
+    },
+    qualificationStructure(row) {
+      const q = this.qualificationOf(row)
+      if (!q.structureLabel || !q.structureRequired) return ''
+      return q.structureLabel + ': ' + (q.structureCurrent || 0) + ' / ' + q.structureRequired
+    },
+    cycleBoxes(row) {
+      const cycles = row && row.rank_cycle && Array.isArray(row.rank_cycle.cycles)
+        ? row.rank_cycle.cycles
+        : []
+      if (cycles.length) return cycles
+      return [1, 2, 3, 4].map((index) => ({
+        index,
+        shortLabel: 'C' + index,
+        status: 'pending',
+        locked: false,
+      }))
+    },
+    cycleStatusText(c) {
+      if (!c) return 'Pendiente'
+      if (c.statusLabel) return c.statusLabel
+      if (c.status === 'completed') return 'Completado'
+      if (c.status === 'in_progress') return 'En curso'
+      return 'Pendiente'
+    },
+    recalificationAmount(row) {
+      if (!row) return 0
+      const rec = Number(row.recalification_bonus)
+      if (rec > 0) return rec
+      return Number(row.rank_bonus_total) || 0
+    },
     rankClass(rank) {
-      if (!rank) return ''
-      return 'rank-' + rank.toLowerCase().replace(/ /g, '-')
+      if (!rank || this.rankLabel(rank) === 'Sin rango') return 'rank-none'
+      return 'rank-' + String(rank).toLowerCase().replace(/ /g, '-')
     },
     /** Porcentaje residual del motor Go (ej. 0.05 → 5.00%). */
     formatResidualPct(p) {
@@ -756,16 +861,17 @@ export default {
 
 /* ─── Table ─── */
 .table-responsive { overflow-x: auto; }
-.cierre-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.cierre-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; table-layout: auto; }
 .cierre-table thead th {
-  background: #f7fafc; color: #4a5568; font-weight: 600;
-  padding: 11px 16px; text-align: left;
-  text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em;
-  border-bottom: 2px solid #e2e8f0;
+  background: #f8fafc; color: #334155; font-weight: 700;
+  padding: 10px 12px; text-align: left;
+  text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.04em;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
-.cierre-table tbody tr { border-bottom: 1px solid #f0f4f8; transition: background 0.15s; }
-.cierre-table tbody tr:hover { background: #f7fafc; }
-.cierre-table td { padding: 11px 16px; color: #2d3748; }
+.cierre-table tbody tr { border-bottom: 1px solid #f1f5f9; }
+.cierre-table tbody tr:hover { background: #f8fafc; }
+.cierre-table td { padding: 10px 12px; color: #2d3748; vertical-align: middle; }
 .td-num   { color: #a0aec0; font-weight: 600; width: 40px; }
 .td-name  { font-weight: 500; }
 .user-dni-sub {
@@ -835,11 +941,22 @@ export default {
 
 /* ─── Rank Badges ─── */
 .rank-badge {
-  display: inline-block; padding: 3px 10px; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap;
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.02em; white-space: nowrap;
 }
-.rank-activo   { background: #e6fffa; color: #2c7a7b; }
+.rank-none { background: #eef2f7; color: #64748b; text-transform: none; }
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.status-pill--on { background: #16a34a; color: #fff; }
+.status-pill--off { background: #ef4444; color: #fff; }
 .rank-bronce   { background: #fef3c7; color: #92400e; }
 .rank-plata    { background: #ebf4ff; color: #2b6cb0; }
 .rank-oro      { background: #fffbeb; color: #b7791f; border: 1px solid #f6e05e; }
@@ -848,7 +965,7 @@ export default {
 .rank-doble-diamante,
 .rank-triple-diamante,
 .rank-diamante-estrella { background: #faf5ff; color: #553c9a; border: 1px solid #d6bcfa; }
-.rank-none      { background: #f7fafc; color: #a0aec0; }
+.rank-none { background: #eef2f7; color: #64748b; text-transform: none; }
 
 /* ─── Save Button ─── */
 .table-card__footer { padding: 18px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; }
@@ -887,10 +1004,132 @@ export default {
 .empty-state span { font-size: 3rem; display: block; margin-bottom: 12px; }
 
 .historical-card { margin-bottom: 14px; }
-</style>
 
 .sub-detail { font-size: 0.85rem; color: #4a5568; line-height: 1.4; }
 
 .td-bonus--residual .residual-amt { color: #718096 !important; }
 .residual-realtime-note { font-size: 0.75rem; color: #a0aec0; font-style: italic; margin-bottom: 4px; }
 .td-bonus--residual .residual-lines__amt { color: #718096; }
+
+.td-qualification { min-width: 190px; max-width: 230px; }
+.qual-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.qual-title { font-weight: 700; color: #1e293b; font-size: 0.78rem; }
+.qual-title--off { color: #64748b; font-weight: 600; }
+.qual-sub { font-size: 0.7rem; color: #94a3b8; margin-top: 3px; line-height: 1.3; }
+.qual-meter { margin-top: 6px; font-size: 0.7rem; color: #475569; }
+.qual-bar {
+  margin-top: 4px;
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.qual-bar__fill {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 999px;
+}
+.qual-structure { margin-top: 6px; font-size: 0.7rem; color: #64748b; }
+
+.td-compact { min-width: 140px; }
+.mini-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 140px;
+}
+.mini-card__line { font-size: 0.72rem; color: #64748b; }
+.mini-card__total {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.mini-card--team { min-width: 160px; }
+.mini-legs { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+.mini-leg {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.68rem;
+}
+.mini-leg__name {
+  color: #475569;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mini-leg__pts { color: #15803d; font-weight: 700; }
+
+.td-cycles { min-width: 196px; }
+.cycle-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 42px);
+  gap: 8px;
+}
+.cycle-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.cycle-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 7px;
+  border: 1.5px solid #dbe3ee;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #64748b;
+}
+.cycle-box--completed {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+}
+.cycle-box--locked {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+.cycle-box--in_progress {
+  background: #fff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+.cycle-box--pending {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+}
+.cycle-box__lock { font-size: 0.55rem; line-height: 1; }
+.cycle-label {
+  font-size: 0.58rem;
+  text-align: center;
+  color: #94a3b8;
+  line-height: 1.15;
+  width: 100%;
+}
+.cycle-label--completed { color: #16a34a; font-weight: 600; }
+.cycle-label--in_progress { color: #2563eb; font-weight: 600; }
+
+.td-residual { white-space: nowrap; }
+.residual-compact { font-size: 0.8rem; font-weight: 600; color: #334155; }
+.residual-compact__note { color: #94a3b8; font-weight: 500; font-size: 0.72rem; }
+.td-rank-bonus { white-space: nowrap; }
+</style>
