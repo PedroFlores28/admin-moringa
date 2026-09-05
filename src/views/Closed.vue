@@ -173,14 +173,17 @@
                       {{ qualificationTitle(node) }}
                     </div>
                     <div class="qual-sub">{{ qualificationSubtitle(node) }}</div>
-                    <template v-if="isMonthlyActive(node) && qualificationHasProgress(node)">
+                    <template v-if="isMonthlyActive(node)">
                       <div class="qual-meter">
                         <span>Volumen: {{ qualificationVolume(node) }}</span>
                         <div class="qual-bar">
                           <div class="qual-bar__fill" :style="{ width: qualificationVolumePct(node) + '%' }"></div>
                         </div>
                       </div>
-                      <div v-if="qualificationStructure(node)" class="qual-structure">
+                      <div
+                        class="qual-structure"
+                        :class="qualificationNeedsLegs(node) ? 'qual-structure--legs' : 'qual-structure--none'"
+                      >
                         {{ qualificationStructure(node) }}
                       </div>
                     </template>
@@ -622,8 +625,14 @@ export default {
     },
     qualificationStructure(row) {
       const q = this.qualificationOf(row)
-      if (!q.structureLabel || !q.structureRequired) return ''
-      return q.structureLabel + ': ' + (q.structureCurrent || 0) + ' / ' + q.structureRequired
+      const required = Number(q.structureRequired) || 0
+      if (!required) return 'Sin requisito de líneas'
+      const label = q.structureLabel || 'Piernas requeridas'
+      return label + ': ' + (q.structureCurrent || 0) + ' / ' + required
+    },
+    qualificationNeedsLegs(row) {
+      const q = this.qualificationOf(row)
+      return !!(q.needsLegs || Number(q.structureRequired) > 0)
     },
     cycleBoxes(row) {
       const cycles = row && row.rank_cycle && Array.isArray(row.rank_cycle.cycles)
@@ -1034,7 +1043,17 @@ export default {
   background: #2563eb;
   border-radius: 999px;
 }
-.qual-structure { margin-top: 6px; font-size: 0.7rem; color: #64748b; }
+.qual-structure { margin-top: 6px; font-size: 0.7rem; }
+.qual-structure--none { color: #94a3b8; }
+.qual-structure--legs {
+  color: #9a3412;
+  font-weight: 700;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin-top: 8px;
+}
 
 .td-compact { min-width: 140px; }
 .mini-card {
