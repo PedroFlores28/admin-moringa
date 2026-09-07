@@ -523,7 +523,7 @@ export default {
     },
     /** Card: Plata en adelante. */
     usersWithRank() {
-      return (this.tree || []).filter((e) => isRankPlataOrAbove(e.max_rank || e.rank)).length
+      return (this.tree || []).filter((e) => this.isMonthlyActive(e) && isRankPlataOrAbove(e.max_rank || e.rank)).length
     },
     activosFull() {
       return (this.tree || []).filter(e => e.activated).length
@@ -531,6 +531,7 @@ export default {
     filteredTree() {
       const q = this.search.toLowerCase()
       return (this.tree || [])
+        .filter((e) => this.isMonthlyActive(e))
         .filter((e) => {
           if (!q) return true
           const name = (e.name || '').toLowerCase()
