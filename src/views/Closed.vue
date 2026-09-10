@@ -478,8 +478,10 @@ export default {
     }
   },
   created() {
-    const account = JSON.parse(localStorage.getItem('session'))
-    this.$store.commit('SET_ACCOUNT', account)
+    try {
+      const account = JSON.parse(localStorage.getItem('adminAccount') || 'null')
+      if (account) this.$store.commit('SET_ACCOUNT', account)
+    } catch (_) {}
     this.GET()
   },
   filters: {
