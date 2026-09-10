@@ -112,7 +112,7 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Nombre</th>
+                <th>Socio</th>
                 <th>Productos personales</th>
                 <th>Productos del equipo</th>
                 <th>Estado</th>
@@ -133,13 +133,27 @@
                     <div v-if="node.dni">CI: {{ node.dni }}</div>
                   </div>
                 </td>
-                <td class="td-compact">
-                  <div class="mini-card">
-                    <div class="mini-card__line">
-                      Afiliación: {{ Number(node.personal_affiliations) || 0 }}
-                      · Recompra: {{ Number(node.personal_recompras) || 0 }}
+                <td class="td-compact td-personal">
+                  <div class="personal-split">
+                    <div class="personal-split__cols">
+                      <div class="personal-split__col">
+                        <div class="personal-split__h">Período actual</div>
+                        <div>Afiliación: {{ currentAffiliations(node) }} prod.</div>
+                        <div>
+                          Recompra: {{ currentRecompras(node) }} prod.
+                          <span
+                            class="personal-split__bs"
+                            :class="currentRecomprasBs(node) >= 360 ? 'personal-split__bs--ok' : 'personal-split__bs--low'"
+                          >{{ formatBs(currentRecomprasBs(node)) }}</span>
+                        </div>
+                      </div>
+                      <div class="personal-split__col">
+                        <div class="personal-split__h">Acumulado anterior</div>
+                        <div>Afiliación hist.: {{ histAffiliations(node) }} prod.</div>
+                        <div>Recompra hist.: {{ histRecompras(node) }} prod.</div>
+                      </div>
                     </div>
-                    <div class="mini-card__total">Total: {{ displayPersonalProducts(node) }} prod.</div>
+                    <div class="personal-split__total">Total personal: {{ displayPersonalTotal(node) }} prod.</div>
                   </div>
                 </td>
                 <td class="td-compact">
@@ -282,7 +296,7 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Nombre</th>
+                  <th>Socio</th>
                   <th>Productos</th>
                   <th>Productos del Equipo</th>
                   <th>Estado | Rango Cerrado</th>
@@ -302,12 +316,26 @@
                     </div>
                   </td>
                   <td>
-                    <div class="personal-products-breakdown">
-                      <div v-if="user.personal_affiliations > 0" class="sub-detail">Afiliaciones: {{ user.personal_affiliations }} {{ user.personal_affiliations === 1 ? 'producto' : 'productos' }}</div>
-                      <div v-if="user.personal_recompras > 0" class="sub-detail">Recompras: {{ user.personal_recompras }} {{ user.personal_recompras === 1 ? 'producto' : 'productos' }}</div>
-                      <div class="group-total" :style="(user.personal_affiliations > 0 || user.personal_recompras > 0) ? 'margin-top: 4px; padding-top: 4px; border-top: 1px dashed #e2e8f0;' : ''">
-                        Total: {{ displayPersonalProducts(user) }} {{ displayPersonalProducts(user) === 1 ? 'producto' : 'productos' }}
+                    <div class="personal-split personal-split--hist">
+                      <div class="personal-split__cols">
+                        <div class="personal-split__col">
+                          <div class="personal-split__h">Período del cierre</div>
+                          <div>Afiliación: {{ currentAffiliations(user) }} prod.</div>
+                          <div>
+                            Recompra: {{ currentRecompras(user) }} prod.
+                            <span
+                              class="personal-split__bs"
+                              :class="currentRecomprasBs(user) >= 360 ? 'personal-split__bs--ok' : 'personal-split__bs--low'"
+                            >{{ formatBs(currentRecomprasBs(user)) }}</span>
+                          </div>
+                        </div>
+                        <div class="personal-split__col">
+                          <div class="personal-split__h">Acumulado anterior</div>
+                          <div>Afiliación hist.: {{ histAffiliations(user) }} prod.</div>
+                          <div>Recompra hist.: {{ histRecompras(user) }} prod.</div>
+                        </div>
                       </div>
+                      <div class="personal-split__total">Total personal: {{ displayPersonalTotal(user) }} prod.</div>
                     </div>
                   </td>
                   <td>
@@ -548,6 +576,34 @@ export default {
       if (!row) return 0
       if (row.personal_products != null) return Number(row.personal_products) || 0
       return Number(row.points) || 0
+    },
+    currentAffiliations(row) {
+      return Number(row && row.personal_affiliations) || 0
+    },
+    currentRecompras(row) {
+      return Number(row && row.personal_recompras) || 0
+    },
+    currentRecomprasBs(row) {
+      return Number(row && row.personal_recompras_bs) || 0
+    },
+    histAffiliations(row) {
+      return Number(row && row.hist_affiliations) || 0
+    },
+    histRecompras(row) {
+      return Number(row && row.hist_recompras) || 0
+    },
+    displayPersonalTotal(row) {
+      return (
+        this.currentAffiliations(row) +
+        this.currentRecompras(row) +
+        this.histAffiliations(row) +
+        this.histRecompras(row)
+      )
+    },
+    formatBs(value) {
+      const n = Number(value) || 0
+      if (Number.isInteger(n)) return 'Bs ' + n
+      return 'Bs ' + n.toFixed(2)
     },
     displayTeamProducts(row) {
       if (!row) return 0
@@ -1059,6 +1115,46 @@ export default {
 }
 
 .td-compact { min-width: 140px; }
+.td-personal { min-width: 320px; vertical-align: top; }
+.personal-split {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-width: 300px;
+}
+.personal-split__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.personal-split__col {
+  font-size: 0.75rem;
+  color: #334155;
+  line-height: 1.45;
+}
+.personal-split__h {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+.personal-split__bs {
+  margin-left: 4px;
+  font-weight: 700;
+}
+.personal-split__bs--ok { color: #16a34a; }
+.personal-split__bs--low { color: #d97706; }
+.personal-split__total {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f172a;
+}
 .mini-card {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
