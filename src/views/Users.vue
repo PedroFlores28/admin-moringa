@@ -1021,7 +1021,15 @@ export default {
 
     async directLogin(user) {
       try {
-        const adminSession = localStorage.getItem("adminSession") || "otdxDIds3wtui3enxb";
+        const adminSession = localStorage.getItem("adminSession");
+        if (!adminSession) {
+          Swal.fire({
+            icon: "error",
+            title: "Sesión requerida",
+            text: "Vuelve a iniciar sesión como administrador para usar el acceso directo.",
+          });
+          return;
+        }
         
         Swal.fire({
           title: "Generando acceso directo...",
