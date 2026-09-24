@@ -411,6 +411,12 @@
                   selectedAffiliation.plan && selectedAffiliation.plan.amount
                 }}</span>
               </div>
+              <div class="detail-item" v-if="selectedAffiliation.plan && selectedAffiliation.plan.sponsor_bonus !== undefined">
+                <span class="detail-label"
+                  ><i class="fas fa-hand-holding-usd"></i> Bono patrocinio:</span
+                >
+                <span class="detail-value">Bs. {{ Number(selectedAffiliation.plan.sponsor_bonus).toFixed(2) }}</span>
+              </div>
               <div class="detail-item" v-if="paymentSplitDisplay(selectedAffiliation).legacyMissing">
                 <span class="detail-label"
                   ><i class="fas fa-wallet"></i> Abono / faltante:</span

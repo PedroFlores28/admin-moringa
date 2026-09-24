@@ -545,6 +545,7 @@ export default {
         bonus: "Bono",
         commission: "Comisión",
         refund: "Reembolso",
+        "affiliation bonus": "Bono por patrocinio directo",
         other: "Otro",
       };
       return typeNames[type] || type;

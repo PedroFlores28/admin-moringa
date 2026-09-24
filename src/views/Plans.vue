@@ -170,6 +170,23 @@
               </div>
 
               <div class="field">
+                <label class="label">Bono por patrocinio directo (Bs)</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    v-model.number="newPlan.sponsor_bonus"
+                    placeholder="120.00"
+                  />
+                </div>
+                <p class="help">
+                  Monto asignado al patrocinador directo por afiliar con este paquete (0 para no generar bono).
+                </p>
+              </div>
+
+              <div class="field">
                 <label class="label">Puntos de Afiliación</label>
                 <div class="control">
                   <input
@@ -302,6 +319,23 @@
               </div>
 
               <div class="field">
+                <label class="label">Bono por patrocinio directo (Bs)</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    v-model.number="editingPlan.sponsor_bonus"
+                    placeholder="120.00"
+                  />
+                </div>
+                <p class="help">
+                  Monto asignado al patrocinador directo por afiliar con este paquete (0 para no generar bono).
+                </p>
+              </div>
+
+              <div class="field">
                 <label class="label">Puntos de Afiliación</label>
                 <div class="control">
                   <input
@@ -430,6 +464,7 @@ export default {
         id: "",
         name: "",
         amount: 0,
+        sponsor_bonus: 120,
         affiliation_points: 0,
         n: 0,
         max_products: 0,
@@ -441,6 +476,7 @@ export default {
         id: "",
         name: "",
         amount: 0,
+        sponsor_bonus: 120,
         affiliation_points: 0,
         n: 0,
         max_products: 0,
@@ -470,6 +506,12 @@ export default {
         {
           key: "amount",
           label: "Monto",
+          sortable: true,
+          type: "currency",
+        },
+        {
+          key: "sponsor_bonus",
+          label: "Bono Patrocinio (Bs)",
           sortable: true,
           type: "currency",
         },
@@ -563,6 +605,10 @@ export default {
             plan.amount !== undefined
               ? parseFloat(plan.amount).toFixed(2)
               : "0.00",
+          sponsor_bonus:
+            plan.sponsor_bonus !== undefined && plan.sponsor_bonus !== null
+              ? parseFloat(plan.sponsor_bonus).toFixed(2)
+              : "120.00",
           affiliation_points: plan.affiliation_points || 0,
           n: plan.n || 0,
           affiliation_active: plan.affiliation_active !== false,
@@ -634,6 +680,10 @@ export default {
       if (action === "edit") {
         this.editingPlan = {
           ...plan,
+          sponsor_bonus:
+            plan.sponsor_bonus !== undefined && plan.sponsor_bonus !== null
+              ? Number(plan.sponsor_bonus)
+              : 120,
           affiliation_active: plan.affiliation_active !== false,
         };
         this.showEditModal = true;
@@ -659,10 +709,27 @@ export default {
         });
         return;
       }
+      if (
+        this.newPlan.sponsor_bonus !== undefined &&
+        Number(this.newPlan.sponsor_bonus) < 0
+      ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Valor inválido",
+          text: "El bono por patrocinio directo no puede ser negativo",
+        });
+        return;
+      }
       try {
         await api.Plans.POST({
           action: "add",
-          data: { ...this.newPlan },
+          data: {
+            ...this.newPlan,
+            sponsor_bonus: Math.max(
+              0,
+              Number(this.newPlan.sponsor_bonus ?? 120)
+            ),
+          },
         });
 
         this.showAddModal = false;
@@ -688,6 +755,17 @@ export default {
     },
 
     async savePlan() {
+      if (
+        this.editingPlan.sponsor_bonus !== undefined &&
+        Number(this.editingPlan.sponsor_bonus) < 0
+      ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Valor inválido",
+          text: "El bono por patrocinio directo no puede ser negativo",
+        });
+        return;
+      }
       try {
         await api.Plans.POST({
           action: "edit",
@@ -695,6 +773,10 @@ export default {
           data: {
             _name: this.editingPlan.name,
             _amount: this.editingPlan.amount,
+            _sponsor_bonus: Math.max(
+              0,
+              Number(this.editingPlan.sponsor_bonus ?? 0)
+            ),
             _img: this.editingPlan.img,
             _affiliation_points: this.editingPlan.affiliation_points,
             _n: this.editingPlan.n,
@@ -765,6 +847,7 @@ export default {
         id: "",
         name: "",
         amount: 0,
+        sponsor_bonus: 120,
         affiliation_points: 0,
         n: 0,
         max_products: 0,
