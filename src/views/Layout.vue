@@ -69,6 +69,14 @@
                 <span>Productos</span>
               </a>
 
+              <!-- Plans -->
+              <a class="navbar-item" href="/plans" v-if="accountType !== 'admin' || can('products')">
+                <span class="icon">
+                  <i class="fas fa-layer-group"></i>
+                </span>
+                <span>Planes</span>
+              </a>
+
               <!-- Transactions -->
               <a class="navbar-item" href="/trans" v-if="accountType !== 'admin' || can('transactions')">
                 <span class="icon">

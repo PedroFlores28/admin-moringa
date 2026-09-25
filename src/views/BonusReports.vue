@@ -15,7 +15,7 @@
           <div class="logic-card wide">
             <h3><i class="fas fa-user-plus"></i> Bono de Afiliación (Class Moringa)</h3>
             <p class="logic-desc">
-              Al aprobarse una afiliación (paquete Bs. 480 o Bs. 500), el patrocinador directo recibe un bono fijo si está activo.
+              Al aprobarse una afiliación, el patrocinador directo recibe el bono por patrocinio configurado en el paquete si está activo (por defecto Bs. 120).
             </p>
             <table class="mini-table">
               <thead>
@@ -27,7 +27,7 @@
               <tbody>
                 <tr>
                   <td><strong>Monto</strong></td>
-                  <td class="amount-val">Bs. {{ affiliationDirectBonus }} (fijo por afiliación)</td>
+                  <td class="amount-val">Configurable por paquete (Bs. {{ affiliationDirectBonus }} por defecto)</td>
                 </tr>
                 <tr>
                   <td><strong>Profundidad</strong></td>
