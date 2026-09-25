@@ -13,11 +13,44 @@
           
           <!-- 1. Bono de Afiliación Class Moringa -->
           <div class="logic-card wide">
-            <h3><i class="fas fa-user-plus"></i> Bono de Afiliación (Class Moringa)</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+              <h3><i class="fas fa-user-plus"></i> Bono por Afiliación al Patrocinador (Class Moringa)</h3>
+              <router-link to="/plans" class="button is-primary is-small" style="border-radius: 8px;">
+                <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                <span>Configurar / Editar Montos en Planes</span>
+              </router-link>
+            </div>
             <p class="logic-desc">
-              Al aprobarse una afiliación, el patrocinador directo recibe el bono por patrocinio configurado en el paquete si está activo (por defecto Bs. 120).
+              Cuando una persona (Persona 2) se afilia, la persona que la afilió (Persona 1 / Patrocinador) recibe el monto en Bs configurado específicamente para ese paquete (ej: Plan 1 paga Bs 120, Plan 2 paga Bs 300).
             </p>
-            <table class="mini-table">
+            <table class="mini-table" v-if="plans && plans.length">
+              <thead>
+                <tr>
+                  <th>Paquete / Plan</th>
+                  <th>Costo Afiliación</th>
+                  <th>Puntos</th>
+                  <th>Pago al Patrocinador</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="plan in plans" :key="plan.id">
+                  <td><strong>{{ plan.name }}</strong> (<code>{{ plan.id }}</code>)</td>
+                  <td>Bs. {{ Number(plan.amount || 0).toFixed(2) }}</td>
+                  <td>{{ plan.affiliation_points || 0 }} pts</td>
+                  <td class="amount-val" style="font-weight: 700; color: #16a34a;">
+                    Bs. {{ Number(plan.sponsor_bonus !== undefined ? plan.sponsor_bonus : 120).toFixed(2) }}
+                  </td>
+                  <td>
+                    <router-link to="/plans" class="button is-info is-small is-light" style="border-radius: 6px;">
+                      <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                      <span>Cambiar</span>
+                    </router-link>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="mini-table" v-else>
               <thead>
                 <tr>
                   <th>Concepto</th>
@@ -34,10 +67,6 @@
                   <td>Solo patrocinador directo (1 nivel)</td>
                 </tr>
                 <tr>
-                  <td><strong>Paquetes</strong></td>
-                  <td>CLASS (Bs. 480) y VIP (Bs. 500)</td>
-                </tr>
-                <tr>
                   <td><strong>Patrocinador activo</strong></td>
                   <td>Reconsumo activo (≥ 120 pts) o afiliación aprobada en el mes</td>
                 </tr>
@@ -45,7 +74,7 @@
             </table>
             <div class="logic-note">
               <i class="fas fa-info-circle"></i>
-              <span>Si el patrocinador directo no está activo, no se genera el bono (no se paga a niveles superiores).</span>
+              <span>El monto que se paga por afiliar a alguien es editable por cada plan en <router-link to="/plans"><strong>Productos → Planes</strong></router-link>. Si un plan se configura en Bs 0, no genera bono directo para ese paquete pero sí comisiones por producto.</span>
             </div>
           </div>
 
@@ -159,11 +188,13 @@
 
 <script>
 import Layout from '@/views/Layout'
+import api from '@/api'
 
 export default {
   components: { Layout },
   data() {
     return {
+      plans: [],
       affiliationDirectBonus: 120,
       rankBonusTable: {
         "PLATA": { cap: 200, logro: 200, maintenance: 0 },
@@ -208,6 +239,14 @@ export default {
     rankClass(rank) {
       if (!rank) return ''
       return 'rank-' + rank.toLowerCase().replace(/ /g, '-')
+    }
+  },
+  async created() {
+    try {
+      const { data } = await api.Plans.GET();
+      this.plans = data.plans || [];
+    } catch (e) {
+      console.error("Error loading plans in BonusReports:", e);
     }
   }
 }

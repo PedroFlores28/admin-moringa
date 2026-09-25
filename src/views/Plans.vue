@@ -170,7 +170,7 @@
               </div>
 
               <div class="field">
-                <label class="label">Bono por patrocinio directo (Bs)</label>
+                <label class="label">Bono de Afiliación (Paga al Patrocinador) (Bs)</label>
                 <div class="control">
                   <input
                     class="input"
@@ -182,7 +182,7 @@
                   />
                 </div>
                 <p class="help">
-                  Monto asignado al patrocinador directo por afiliar con este paquete (0 para no generar bono).
+                  Monto que cobra la persona que afilia (patrocinador) cuando un nuevo socio se registra con este paquete. Ejemplo: Plan 1 paga Bs 120, Plan 2 paga Bs 300 (0 para no generar bono).
                 </p>
               </div>
 
@@ -319,7 +319,7 @@
               </div>
 
               <div class="field">
-                <label class="label">Bono por patrocinio directo (Bs)</label>
+                <label class="label">Bono de Afiliación (Paga al Patrocinador) (Bs)</label>
                 <div class="control">
                   <input
                     class="input"
@@ -331,7 +331,7 @@
                   />
                 </div>
                 <p class="help">
-                  Monto asignado al patrocinador directo por afiliar con este paquete (0 para no generar bono).
+                  Monto que cobra la persona que afilia (patrocinador) cuando un nuevo socio se registra con este paquete. Ejemplo: Plan 1 paga Bs 120, Plan 2 paga Bs 300 (0 para no generar bono).
                 </p>
               </div>
 
@@ -511,7 +511,7 @@ export default {
         },
         {
           key: "sponsor_bonus",
-          label: "Bono Patrocinio (Bs)",
+          label: "Bono al Patrocinador (Bs)",
           sortable: true,
           type: "currency",
         },
