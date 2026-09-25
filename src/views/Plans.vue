@@ -727,7 +727,7 @@ export default {
             ...this.newPlan,
             sponsor_bonus: Math.max(
               0,
-              Number(this.newPlan.sponsor_bonus ?? 120)
+              Number(this.newPlan.sponsor_bonus !== undefined && this.newPlan.sponsor_bonus !== null ? this.newPlan.sponsor_bonus : 120)
             ),
           },
         });
@@ -775,7 +775,7 @@ export default {
             _amount: this.editingPlan.amount,
             _sponsor_bonus: Math.max(
               0,
-              Number(this.editingPlan.sponsor_bonus ?? 0)
+              Number(this.editingPlan.sponsor_bonus !== undefined && this.editingPlan.sponsor_bonus !== null ? this.editingPlan.sponsor_bonus : 0)
             ),
             _img: this.editingPlan.img,
             _affiliation_points: this.editingPlan.affiliation_points,
